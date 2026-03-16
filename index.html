@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estimation Travaux — Narbonne</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F5F2EE;--surface:#FFFFFF;--surface2:#F0EDE8;--border:#DDD9D2;
+  --text:#1A1714;--muted:#7A746C;--accent:#C8440A;--accent-light:#FBE9E0;
+  --accent2:#2B5F3E;--accent2-light:#E0EDE5;
+  --mono:'DM Mono',monospace;--sans:'Syne',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:14px;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem 1.25rem 4rem;}
+header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;border-bottom:1.5px solid var(--text);padding-bottom:0.9rem;}
+header h1{font-size:1.5rem;font-weight:700;letter-spacing:-0.02em;}
+header .subtitle{font-size:0.7rem;color:var(--muted);font-family:var(--mono);margin-top:2px;}
+.grand-total-badge{background:var(--text);color:#fff;font-family:var(--mono);font-size:1rem;padding:0.45rem 1rem;border-radius:4px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:1rem;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:0.8rem 1rem 0.65rem;border-bottom:1px solid var(--border);}
+.card-title{font-size:0.82rem;font-weight:600;}
+.card-total{font-family:var(--mono);font-size:0.95rem;font-weight:500;color:var(--accent);}
+.card-body{padding:0.8rem 1rem;}
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{display:grid;grid-template-columns:20px 1fr auto;align-items:start;gap:0.5rem;padding:0.6rem 0;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;}
+.step-num{width:20px;height:20px;background:var(--surface2);border-radius:50%;font-family:var(--mono);font-size:0.6rem;display:flex;align-items:center;justify-content:center;color:var(--muted);flex-shrink:0;margin-top:2px;}
+.step.active .step-num{background:var(--accent);color:#fff;}
+.step-label{font-size:0.8rem;font-weight:500;margin-bottom:3px;}
+.step-controls{display:flex;flex-direction:column;gap:4px;margin-top:4px;}
+.control-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.control-row label{font-size:0.68rem;color:var(--muted);min-width:100px;}
+input[type=number]{width:72px;padding:3px 5px;border:1px solid var(--border);border-radius:4px;font-family:var(--mono);font-size:0.78rem;background:var(--bg);color:var(--text);}
+input[type=number]:focus{outline:2px solid var(--accent);border-color:transparent;}
+.toggle-group{display:flex;gap:3px;flex-wrap:wrap;}
+.toggle{padding:2px 9px;font-size:0.68rem;font-family:var(--sans);border:1px solid var(--border);border-radius:20px;cursor:pointer;background:var(--bg);color:var(--muted);transition:all 0.12s;white-space:nowrap;}
+.toggle:hover{border-color:var(--accent);color:var(--accent);}
+.toggle.selected{background:var(--accent);border-color:var(--accent);color:#fff;}
+.step-price{font-family:var(--mono);font-size:0.78rem;color:var(--accent);font-weight:500;white-space:nowrap;margin-top:2px;text-align:right;}
+.step-price.zero{color:var(--muted);}
+.skip-toggle{display:flex;align-items:center;gap:5px;margin-top:3px;}
+.skip-toggle input[type=checkbox]{accent-color:var(--accent2);width:13px;height:13px;cursor:pointer;}
+.skip-toggle label{font-size:0.68rem;color:var(--muted);cursor:pointer;}
+.step.skipped{opacity:0.38;}
+.step.skipped .step-num{background:var(--border);color:var(--muted);}
+.subtotal-row{display:flex;justify-content:space-between;align-items:center;margin-top:0.65rem;padding-top:0.55rem;border-top:1.5px solid var(--text);}
+.subtotal-row span:first-child{font-size:0.7rem;color:var(--muted);font-family:var(--mono);}
+.subtotal-row span:last-child{font-family:var(--mono);font-size:0.95rem;font-weight:500;color:var(--accent);}
+.note-box{background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:0.4rem 0.65rem;font-size:0.68rem;color:var(--accent);margin-top:0.65rem;line-height:1.5;}
+.info-box{background:var(--accent2-light);border-left:3px solid var(--accent2);border-radius:0 4px 4px 0;padding:0.4rem 0.65rem;font-size:0.68rem;color:var(--accent2);margin-top:0.5rem;line-height:1.5;}
+.add-btn{display:flex;align-items:center;gap:5px;margin-top:0.6rem;padding:4px 10px;background:transparent;border:1px dashed var(--border);border-radius:6px;cursor:pointer;font-size:0.72rem;color:var(--muted);font-family:var(--sans);transition:all 0.12s;width:100%;}
+.add-btn:hover{border-color:var(--accent);color:var(--accent);}
+.zone-sol{background:var(--surface2);border-radius:6px;padding:0.6rem 0.75rem;margin-top:0.5rem;position:relative;}
+.zone-sol-title{font-size:0.72rem;font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+.zone-sol-price{font-family:var(--mono);font-size:0.78rem;color:var(--accent);}
+.remove-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.9rem;padding:0;line-height:1;}
+.remove-btn:hover{color:var(--accent);}
+.summary-card{background:var(--text);color:#fff;border-radius:10px;padding:1.1rem 1.25rem;grid-column:1/-1;margin-top:0.25rem;}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.85rem;}
+.s-label{font-size:0.65rem;color:rgba(255,255,255,0.45);font-family:var(--mono);margin-bottom:3px;}
+.s-val{font-family:var(--mono);font-size:1rem;color:#fff;}
+.s-val.big{font-size:1.4rem;color:#FFCBA8;}
+.s-val.mid{font-size:1.1rem;color:#B8E8C8;}
+.section-divider{grid-column:1/-1;border-top:1px solid rgba(255,255,255,0.12);padding-top:0.75rem;margin-top:0.1rem;font-size:0.65rem;color:rgba(255,255,255,0.35);font-family:var(--mono);letter-spacing:0.05em;}
+select{padding:3px 7px;border:1px solid var(--border);border-radius:4px;font-family:var(--sans);font-size:0.72rem;background:var(--bg);color:var(--text);cursor:pointer;}
+select:focus{outline:2px solid var(--accent);}
+.piece-deco{background:var(--surface2);border-radius:6px;padding:0.55rem 0.75rem;margin-bottom:6px;}
+.piece-deco-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.piece-deco-name{font-size:0.75rem;font-weight:600;}
+.piece-deco-total{font-family:var(--mono);font-size:0.78rem;color:var(--accent);}
+.deco-row{display:flex;align-items:center;justify-content:space-between;padding:2px 0;font-size:0.7rem;}
+.deco-row span{color:var(--muted);}
+.deco-row .deco-val{font-family:var(--mono);font-size:0.7rem;color:var(--text);}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Estimation Travaux &amp; Ameublement</h1>
+    <div class="subtitle">Narbonne · Occitanie · Tarifs artisans 2025</div>
+  </div>
+  <div class="grand-total-badge" id="grand-total-header">0 €</div>
+</header>
+
+<div class="grid" id="main-grid">
+
+<!-- ═══ SOLS ═══ -->
+<div class="card">
+  <div class="card-header"><span class="card-title">Sols</span><span class="card-total" id="total-sol">0 €</span></div>
+  <div class="card-body">
+    <div id="zones-sol"></div>
+    <button class="add-btn" onclick="addZoneSol()">+ Ajouter une zone / pièce</button>
+    <div class="subtotal-row"><span>total sols</span><span id="subtotal-sol">0 €</span></div>
+  </div>
+</div>
+
+<!-- ═══ MURS / PEINTURE ═══ -->
+<div class="card">
+  <div class="card-header"><span class="card-title">Murs &amp; peinture</span><span class="card-total" id="total-peinture">0 €</span></div>
+  <div class="card-body">
+    <div class="steps">
+      <div class="step active">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-label">Dépose tapisserie / décrépissage</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Surface au sol (m²)</label><input type="number" id="peinture-surf" value="80" min="1" oninput="calcPeinture()"></div>
+            <div class="control-row"><label>Revêtement existant</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('mur-existant','tapisserie',this);calcPeinture()">Tapisserie</button>
+                <button class="toggle" onclick="setT('mur-existant','vieille-peinture',this);calcPeinture()">Vieille peinture</button>
+                <button class="toggle" onclick="setT('mur-existant','nu',this);calcPeinture()">Murs nus</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-p-1">—</div>
+      </div>
+      <div class="step" id="step-p-2">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-label">Enduit de lissage / rebouchage</div>
+          <div class="skip-toggle"><input type="checkbox" id="skip-enduit" onchange="calcPeinture()"><label for="skip-enduit">Pas nécessaire</label></div>
+          <div id="enduit-controls" class="step-controls">
+            <div class="control-row"><label>Niveau</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('enduit-type','rebouchage',this);calcPeinture()">Rebouchage</button>
+                <button class="toggle" onclick="setT('enduit-type','plein',this);calcPeinture()">Enduit plein</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-p-2">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-label">Peinture (sous-couche + finition)</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Qualité</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('peinture-qual','standard',this);calcPeinture()">Standard</button>
+                <button class="toggle" onclick="setT('peinture-qual','soigne',this);calcPeinture()">Soigné</button>
+              </div>
+            </div>
+            <div class="control-row"><label>Hauteur sous plafond</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('hsp','250',this);calcPeinture()">2,5 m</button>
+                <button class="toggle" onclick="setT('hsp','280',this);calcPeinture()">2,8 m</button>
+                <button class="toggle" onclick="setT('hsp','300',this);calcPeinture()">3 m +</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-p-3">—</div>
+      </div>
+    </div>
+    <div class="subtotal-row"><span>total murs</span><span id="subtotal-peinture">0 €</span></div>
+  </div>
+</div>
+
+<!-- ═══ FENÊTRES ═══ -->
+<div class="card">
+  <div class="card-header"><span class="card-title">Fenêtres &amp; volets</span><span class="card-total" id="total-fen">0 €</span></div>
+  <div class="card-body">
+    <div class="steps">
+      <div class="step active">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-label">Dépose menuiseries + volets existants</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Fenêtres petites</label><input type="number" id="fen-petit" value="2" min="0" oninput="calcFen()"><span style="font-size:0.65rem;color:var(--muted)">60×90 cm</span></div>
+            <div class="control-row"><label>Fenêtres standard</label><input type="number" id="fen-standard" value="3" min="0" oninput="calcFen()"><span style="font-size:0.65rem;color:var(--muted)">100×120 cm</span></div>
+            <div class="control-row"><label>Baies / grandes</label><input type="number" id="fen-baie" value="1" min="0" oninput="calcFen()"><span style="font-size:0.65rem;color:var(--muted)">coulissante / +150</span></div>
+            <div class="control-row"><label>Volets existants</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('volet-existant','aucun',this);calcFen()">Aucun</button>
+                <button class="toggle" onclick="setT('volet-existant','bois',this);calcFen()">Bois battant</button>
+                <button class="toggle" onclick="setT('volet-existant','roulant',this);calcFen()">Volet roulant</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-fen-1">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-label">Fourniture + pose fenêtres PVC double vitrage</div>
+        </div>
+        <div class="step-price" id="price-fen-2">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-label">Volets neufs (optionnel)</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Type de volet neuf</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('volet-neuf','aucun',this);calcFen()">Aucun</button>
+                <button class="toggle" onclick="setT('volet-neuf','bois',this);calcFen()">Bois battant</button>
+                <button class="toggle" onclick="setT('volet-neuf','alu',this);calcFen()">Alu battant</button>
+                <button class="toggle" onclick="setT('volet-neuf','roulant-elec',this);calcFen()">Roulant électrique</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-fen-3">—</div>
+      </div>
+      <div class="step" id="step-fen-rebouchage">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-label">Rebouchage / finitions encadrements</div>
+          <div class="skip-toggle"><input type="checkbox" id="skip-fen-reb" onchange="calcFen()"><label for="skip-fen-reb">Pas nécessaire</label></div>
+        </div>
+        <div class="step-price" id="price-fen-4">—</div>
+      </div>
+    </div>
+    <div class="subtotal-row"><span>total fenêtres &amp; volets</span><span id="subtotal-fen">0 €</span></div>
+  </div>
+</div>
+
+<!-- ═══ ÉLECTRICITÉ ═══ -->
+<div class="card">
+  <div class="card-header"><span class="card-title">Électricité (remise aux normes totale)</span><span class="card-total" id="total-elec">0 €</span></div>
+  <div class="card-body">
+    <div class="steps">
+      <div class="step active">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-label">Dépose ancienne installation</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Surface logement (m²)</label><input type="number" id="elec-surf" value="80" min="1" oninput="calcElec()"></div>
+            <div class="control-row"><label>Nb de pièces</label><input type="number" id="elec-pieces" value="4" min="1" max="15" oninput="calcElec()"></div>
+          </div>
+        </div>
+        <div class="step-price" id="price-elec-1">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-label">Tableau + câblage complet</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Passage câbles</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('cable-passage','goulotte',this);calcElec()">Goulottes apparentes</button>
+                <button class="toggle" onclick="setT('cable-passage','saigne',this);calcElec()">Saignées encastrées</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-elec-2">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-label">Prises, interrupteurs, points lumineux</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Appareillage</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('appareillage','eco',this);calcElec()">Économique</button>
+                <button class="toggle" onclick="setT('appareillage','standard',this);calcElec()">Standard</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-elec-3">—</div>
+      </div>
+      <div class="step" id="step-vmc">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-label">VMC (ventilation mécanique)</div>
+          <div class="skip-toggle"><input type="checkbox" id="skip-vmc" onchange="calcElec()"><label for="skip-vmc">Déjà présente / non nécessaire</label></div>
+          <div id="vmc-controls" class="step-controls">
+            <div class="control-row"><label>Nb de VMC à poser</label><input type="number" id="vmc-nb" value="1" min="1" max="5" oninput="calcElec()"></div>
+            <div class="control-row"><label>Type</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('vmc-type','simple',this);calcElec()">Simple flux</button>
+                <button class="toggle" onclick="setT('vmc-type','double',this);calcElec()">Double flux</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-elec-4">—</div>
+      </div>
+    </div>
+    <div class="info-box">La VMC est utile dans toute SDB sans fenêtre ouvrable. Comptez 1 VMC par SDB concernée — ce n'est pas dimensionné à la surface mais au nb de pièces à ventiler.</div>
+    <div class="subtotal-row"><span>total électricité</span><span id="subtotal-elec">0 €</span></div>
+  </div>
+</div>
+
+<!-- ═══ CLIMATISATION ═══ -->
+<div class="card">
+  <div class="card-header"><span class="card-title">Climatisation réversible</span><span class="card-total" id="total-clim">0 €</span></div>
+  <div class="card-body">
+    <div class="steps">
+      <div class="step active">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-label">Configuration système</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Config</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('clim-config','mono',this);calcClim()">Mono-splits séparés</button>
+                <button class="toggle" onclick="setT('clim-config','multi',this);calcClim()">Multi-split</button>
+              </div>
+            </div>
+            <div class="control-row"><label>Nb de pièces</label><input type="number" id="clim-nb" value="3" min="1" max="10" oninput="calcClim()"></div>
+          </div>
+        </div>
+        <div class="step-price zero">config</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-label">Fourniture + pose + liaisons</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Puissance par unité</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('clim-puissance','2500',this);calcClim()">2 500 W</button>
+                <button class="toggle" onclick="setT('clim-puissance','3500',this);calcClim()">3 500 W</button>
+                <button class="toggle" onclick="setT('clim-puissance','5000',this);calcClim()">5 000 W</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-clim-2">—</div>
+      </div>
+    </div>
+    <div class="note-box">Dès 3 pièces, le multi-split économise 25–35 % vs mono-splits. Prévoir un circuit électrique dédié par groupe extérieur.</div>
+    <div class="subtotal-row"><span>total clim</span><span id="subtotal-clim">0 €</span></div>
+  </div>
+</div>
+
+<!-- ═══ SALLE DE BAINS ═══ -->
+<div class="card">
+  <div class="card-header"><span class="card-title">Salle de bains</span><span class="card-total" id="total-sdb">0 €</span></div>
+  <div class="card-body">
+    <div class="steps">
+      <div class="step active">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-label">Dépose totale</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Nb de salles de bains</label><input type="number" id="sdb-nb" value="1" min="1" max="6" oninput="calcSDB()"></div>
+            <div class="control-row"><label>Surface unitaire</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('sdb-surf','petit',this);calcSDB()">3–4 m²</button>
+                <button class="toggle" onclick="setT('sdb-surf','moyen',this);calcSDB()">5–7 m²</button>
+                <button class="toggle" onclick="setT('sdb-surf','grand',this);calcSDB()">8 m² +</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-sdb-1">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-label">Carrelage murs + sol</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Qualité faïence</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('sdb-carrelage','eco',this);calcSDB()">Entrée de gamme</button>
+                <button class="toggle" onclick="setT('sdb-carrelage','standard',this);calcSDB()">Standard</button>
+                <button class="toggle" onclick="setT('sdb-carrelage','premium',this);calcSDB()">Soigné</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-sdb-2">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-label">Douche / baignoire</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Type</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('sdb-douche','bac',this);calcSDB()">Bac acrylique</button>
+                <button class="toggle" onclick="setT('sdb-douche','italienne',this);calcSDB()">Italienne</button>
+                <button class="toggle" onclick="setT('sdb-douche','baignoire',this);calcSDB()">Baignoire</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-sdb-3">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-label">Lavabo + meuble de salle de bains</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Type meuble vasque</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('sdb-meuble','simple',this);calcSDB()">Vasque + colonne</button>
+                <button class="toggle" onclick="setT('sdb-meuble','meuble',this);calcSDB()">Meuble 60 cm</button>
+                <button class="toggle" onclick="setT('sdb-meuble','meuble80',this);calcSDB()">Meuble 80 cm +</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-sdb-4">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-label">WC</div>
+          <div class="step-controls">
+            <div class="control-row"><label>WC dans la SDB ?</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('sdb-wc-presence','oui',this);calcSDB()">Oui, dans la SDB</button>
+                <button class="toggle" onclick="setT('sdb-wc-presence','separe',this);calcSDB()">Non, WC séparés</button>
+                <button class="toggle" onclick="setT('sdb-wc-presence','non',this);calcSDB()">Pas de WC à poser</button>
+              </div>
+            </div>
+            <div class="control-row" id="wc-type-row"><label>Type WC</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('sdb-wc-type','classique',this);calcSDB()">Classique au sol</button>
+                <button class="toggle" onclick="setT('sdb-wc-type','suspendu',this);calcSDB()">Suspendu (bâti-support)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-sdb-5">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <div class="step-label">Plomberie + robinetterie + ventilation</div>
+        </div>
+        <div class="step-price" id="price-sdb-6">—</div>
+      </div>
+    </div>
+    <div class="subtotal-row"><span>total salle de bains</span><span id="subtotal-sdb">0 €</span></div>
+  </div>
+</div>
+
+<!-- ═══ CUISINE ═══ -->
+<div class="card">
+  <div class="card-header"><span class="card-title">Cuisine</span><span class="card-total" id="total-cuisine">0 €</span></div>
+  <div class="card-body">
+    <div class="steps">
+      <div class="step active">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-label">Dépose ancienne cuisine</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Nb de cuisines</label><input type="number" id="cuisine-nb" value="1" min="1" max="8" oninput="calcCuisine()"></div>
+            <div class="control-row"><label>Linéaire meubles bas (m)</label><input type="number" id="cuisine-lin" value="2" min="1" max="10" step="0.5" oninput="calcCuisine()"></div>
+          </div>
+        </div>
+        <div class="step-price" id="price-c-1">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-label">Meubles bas + meubles hauts + plan de travail + évier</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Gamme</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('cuisine-gamme','eco',this);calcCuisine()">Ikea / LM</button>
+                <button class="toggle" onclick="setT('cuisine-gamme','standard',this);calcCuisine()">Standard</button>
+                <button class="toggle" onclick="setT('cuisine-gamme','premium',this);calcCuisine()">Sur mesure</button>
+              </div>
+            </div>
+            <div class="control-row"><label>Plan de travail</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('pdtrav','stratifie',this);calcCuisine()">Stratifié</button>
+                <button class="toggle" onclick="setT('pdtrav','quartz',this);calcCuisine()">Quartz / pierre</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-c-2">—</div>
+      </div>
+      <div class="step" id="step-c-credence">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-label">Crédence</div>
+          <div class="skip-toggle"><input type="checkbox" id="skip-credence" onchange="calcCuisine()"><label for="skip-credence">Peinture simple (pas de crédence)</label></div>
+          <div id="credence-controls" class="step-controls">
+            <div class="control-row"><label>Type</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('credence-type','carrelage',this);calcCuisine()">Carrelage</button>
+                <button class="toggle" onclick="setT('credence-type','verre',this);calcCuisine()">Verre laqué</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-c-3">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-label">Plomberie raccordement + électricité cuisine</div>
+        </div>
+        <div class="step-price" id="price-c-4">—</div>
+      </div>
+      <div class="step active">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-label">Électroménager</div>
+          <div class="step-controls">
+            <div class="control-row"><label>Plaque de cuisson</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('electro-plaque','non',this);calcCuisine()">Non</button>
+                <button class="toggle" onclick="setT('electro-plaque','vitroceramique',this);calcCuisine()">Vitrocéramique</button>
+                <button class="toggle" onclick="setT('electro-plaque','induction',this);calcCuisine()">Induction</button>
+              </div>
+            </div>
+            <div class="control-row"><label>Four</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('electro-four','non',this);calcCuisine()">Non</button>
+                <button class="toggle" onclick="setT('electro-four','oui',this);calcCuisine()">Oui</button>
+              </div>
+            </div>
+            <div class="control-row"><label>Micro-ondes</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('electro-mo','non',this);calcCuisine()">Non</button>
+                <button class="toggle" onclick="setT('electro-mo','oui',this);calcCuisine()">Oui</button>
+              </div>
+            </div>
+            <div class="control-row"><label>Réfrigérateur</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('electro-frigo','non',this);calcCuisine()">Non</button>
+                <button class="toggle" onclick="setT('electro-frigo','oui',this);calcCuisine()">Oui</button>
+              </div>
+            </div>
+            <div class="control-row"><label>Hotte</label>
+              <div class="toggle-group">
+                <button class="toggle selected" onclick="setT('electro-hotte','non',this);calcCuisine()">Non</button>
+                <button class="toggle" onclick="setT('electro-hotte','oui',this);calcCuisine()">Oui</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-price" id="price-c-5">—</div>
+      </div>
+    </div>
+    <div class="subtotal-row"><span>total cuisine</span><span id="subtotal-cuisine">0 €</span></div>
+  </div>
+</div>
+
+<!-- ═══ AMEUBLEMENT / DÉCO ═══ -->
+<div class="card" style="grid-column:1/-1;">
+  <div class="card-header"><span class="card-title">Ameublement &amp; décoration (par pièce)</span><span class="card-total" id="total-deco">0 €</span></div>
+  <div class="card-body">
+    <div id="pieces-deco"></div>
+    <button class="add-btn" onclick="addPieceDeco()">+ Ajouter une pièce</button>
+    <div class="subtotal-row"><span>total ameublement / déco</span><span id="subtotal-deco">0 €</span></div>
+  </div>
+</div>
+
+<!-- ═══ RÉCAPITULATIF ═══ -->
+<div class="summary-card">
+  <div class="summary-grid">
+    <div>
+      <div class="s-label">sous-total travaux</div>
+      <div class="s-val mid" id="sum-travaux">0 €</div>
+    </div>
+    <div>
+      <div class="s-label">sous-total ameublement / déco</div>
+      <div class="s-val mid" id="sum-deco">0 €</div>
+    </div>
+    <div>
+      <div class="s-label">GRAND TOTAL</div>
+      <div class="s-val big" id="sum-total">0 €</div>
+    </div>
+    <div>
+      <div class="s-label">fourchette basse (−20%)</div>
+      <div class="s-val" id="sum-low">0 €</div>
+    </div>
+    <div>
+      <div class="s-label">fourchette haute (+25%)</div>
+      <div class="s-val" id="sum-high">0 €</div>
+    </div>
+    <div>
+      <div class="s-label">ratio travaux / m²</div>
+      <div class="s-val" id="sum-ratio">— €/m²</div>
+    </div>
+    <div class="section-divider">Rappel · obtenir 3 devis · variation possible de ±30% selon artisan et état réel du bien · ratios Narbonne / Occitanie 2025</div>
+  </div>
+</div>
+
+</div><!-- end grid -->
+
+<script>
+const S = {
+  'mur-existant':'tapisserie','enduit-type':'rebouchage','peinture-qual':'standard','hsp':'250',
+  'volet-existant':'aucun','volet-neuf':'aucun',
+  'cable-passage':'goulotte','appareillage':'eco','vmc-type':'simple',
+  'clim-config':'mono','clim-puissance':'2500',
+  'sdb-surf':'petit','sdb-carrelage':'eco','sdb-douche':'bac','sdb-meuble':'simple',
+  'sdb-wc-presence':'oui','sdb-wc-type':'classique',
+  'cuisine-gamme':'eco','pdtrav':'stratifie','credence-type':'carrelage',
+  'electro-plaque':'non','electro-four':'non','electro-mo':'non','electro-frigo':'non','electro-hotte':'non',
+};
+
+function setT(key,val,el){
+  S[key]=val;
+  el.closest('.toggle-group').querySelectorAll('.toggle').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function fmt(n){return Math.round(n).toLocaleString('fr-FR')+' €';}
+function setPrice(id,val){
+  const el=document.getElementById(id); if(!el)return;
+  el.textContent=val===0?'—':fmt(val);
+  el.className='step-price'+(val===0?' zero':'');
+}
+function setSkip(stepId,skip){
+  const el=document.getElementById(stepId); if(!el)return;
+  el.classList.toggle('skipped',skip);
+}
+
+let totals={sol:0,peinture:0,fen:0,elec:0,clim:0,sdb:0,cuisine:0,deco:0};
+
+function updateGrand(){
+  const trav=totals.sol+totals.peinture+totals.fen+totals.elec+totals.clim+totals.sdb+totals.cuisine;
+  const deco=totals.deco;
+  const total=trav+deco;
+  const surf=+document.getElementById('elec-surf')?.value||80;
+  document.getElementById('grand-total-header').textContent=fmt(total);
+  document.getElementById('sum-travaux').textContent=fmt(trav);
+  document.getElementById('sum-deco').textContent=fmt(deco);
+  document.getElementById('sum-total').textContent=fmt(total);
+  document.getElementById('sum-low').textContent=fmt(total*0.8);
+  document.getElementById('sum-high').textContent=fmt(total*1.25);
+  document.getElementById('sum-ratio').textContent=surf>0?Math.round(trav/surf)+' €/m²':'—';
+}
+
+// ═══ ZONES SOL ═══
+let solZones=[];
+let solZoneId=0;
+const SOL_TYPES={
+  carrelage:{label:'Carrelage',formats:{'30x60':{label:'30×60',prix:45},'60x60':{label:'60×60',prix:52},'grand':{label:'Grand format',prix:65}}},
+  pvc:{label:'Sol PVC',prix:30},
+  parquet:{label:'Parquet stratifié',prix:38},
+};
+const DEPOSE_TYPES={carrelage:{label:'Carrelage',prix:8},parquet:{label:'Parquet',prix:6},moquette:{label:'Moquette',prix:4},rien:{label:'Rien à déposer',prix:0}};
+const RAGR_TYPES={non:{label:'Non nécessaire',prix:0},autolissant:{label:'Ragréage autolissant',prix:14},epais:{label:'Ragréage épais',prix:22}};
+
+function addZoneSol(name,surf,depose,ragr,type,format){
+  const id='sz'+(solZoneId++);
+  const z={id,name:name||'Zone '+(solZoneId),surf:surf||20,depose:depose||'carrelage',ragr:ragr||'non',type:type||'carrelage',format:format||'30x60'};
+  solZones.push(z);
+  renderSolZones();
+}
+
+function removeSolZone(id){
+  solZones=solZones.filter(z=>z.id!==id);
+  renderSolZones();
+}
+
+function renderSolZones(){
+  const cont=document.getElementById('zones-sol');
+  cont.innerHTML='';
+  solZones.forEach(z=>{
+    const depose=DEPOSE_TYPES[z.depose]||DEPOSE_TYPES.carrelage;
+    const ragr=RAGR_TYPES[z.ragr]||RAGR_TYPES.non;
+    const isCarrelage=z.type==='carrelage';
+    const priceDepose=z.surf*(depose.prix||0);
+    const priceRagr=z.surf*(ragr.prix||0);
+    let pricePose=0;
+    if(isCarrelage){const fmt2=SOL_TYPES.carrelage.formats[z.format]||SOL_TYPES.carrelage.formats['30x60'];pricePose=z.surf*fmt2.prix;}
+    else pricePose=z.surf*(SOL_TYPES[z.type]?.prix||30);
+    const total=priceDepose+priceRagr+pricePose;
+
+    const dispDepose=priceDepose>0?fmt(priceDepose):'inclus';
+    const dispRagr=priceRagr>0?fmt(priceRagr):'—';
+
+    const deposeOpts=Object.entries(DEPOSE_TYPES).map(([k,v])=>`<button class="toggle${z.depose===k?' selected':''}" onclick="setSolField('${z.id}','depose','${k}')">${v.label}</button>`).join('');
+    const ragrOpts=Object.entries(RAGR_TYPES).map(([k,v])=>`<button class="toggle${z.ragr===k?' selected':''}" onclick="setSolField('${z.id}','ragr','${k}')">${v.label}</button>`).join('');
+    const typeOpts=`<button class="toggle${z.type==='carrelage'?' selected':''}" onclick="setSolField('${z.id}','type','carrelage')">Carrelage</button><button class="toggle${z.type==='pvc'?' selected':''}" onclick="setSolField('${z.id}','type','pvc')">Sol PVC</button><button class="toggle${z.type==='parquet'?' selected':''}" onclick="setSolField('${z.id}','type','parquet')">Parquet stratifié</button>`;
+    const formatOpts=isCarrelage?`<div class="control-row"><label>Format</label><div class="toggle-group"><button class="toggle${z.format==='30x60'?' selected':''}" onclick="setSolField('${z.id}','format','30x60')">30×60</button><button class="toggle${z.format==='60x60'?' selected':''}" onclick="setSolField('${z.id}','format','60x60')">60×60</button><button class="toggle${z.format==='grand'?' selected':''}" onclick="setSolField('${z.id}','format','grand')">Grand format</button></div></div>`:'';
+
+    cont.innerHTML+=`
+    <div class="zone-sol">
+      <div class="zone-sol-title">
+        <input style="background:transparent;border:none;border-bottom:1px dashed var(--border);font-family:var(--sans);font-size:0.75rem;font-weight:600;width:140px;color:var(--text);padding:1px 3px;" value="${z.name}" oninput="setSolField('${z.id}','name',this.value)">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="zone-sol-price">${fmt(total)}</span><button class="remove-btn" onclick="removeSolZone('${z.id}')">✕</button></div>
+      </div>
+      <div class="step-controls">
+        <div class="control-row"><label>Surface (m²)</label><input type="number" value="${z.surf}" min="1" style="width:60px;" oninput="setSolField('${z.id}','surf',+this.value)"></div>
+        <div class="control-row"><label>Étape 1 · Dépose</label><div class="toggle-group">${deposeOpts}</div></div>
+        <div style="display:flex;gap:20px;font-size:0.65rem;color:var(--muted);padding:1px 0;"><span>Dépose : ${dispDepose}</span></div>
+        <div class="control-row"><label>Étape 2 · Ragréage</label><div class="toggle-group">${ragrOpts}</div></div>
+        <div style="display:flex;gap:20px;font-size:0.65rem;color:var(--muted);padding:1px 0;"><span>Ragréage : ${dispRagr}</span></div>
+        <div class="control-row"><label>Étape 3 · Nouveau sol</label><div class="toggle-group">${typeOpts}</div></div>
+        ${formatOpts}
+        <div style="display:flex;gap:20px;font-size:0.65rem;color:var(--muted);padding:1px 0;"><span>Pose : ${fmt(pricePose)}</span></div>
+      </div>
+    </div>`;
+  });
+  calcSolTotal();
+}
+
+function setSolField(id,field,val){
+  const z=solZones.find(z=>z.id===id); if(!z)return;
+  z[field]=val;
+  renderSolZones();
+}
+
+function calcSolTotal(){
+  let total=0;
+  solZones.forEach(z=>{
+    const d=DEPOSE_TYPES[z.depose]||DEPOSE_TYPES.carrelage;
+    const r=RAGR_TYPES[z.ragr]||RAGR_TYPES.non;
+    total+=z.surf*(d.prix||0)+z.surf*(r.prix||0);
+    if(z.type==='carrelage'){const f=SOL_TYPES.carrelage.formats[z.format]||SOL_TYPES.carrelage.formats['30x60'];total+=z.surf*f.prix;}
+    else total+=z.surf*(SOL_TYPES[z.type]?.prix||30);
+  });
+  totals.sol=total;
+  document.getElementById('subtotal-sol').textContent=fmt(total);
+  document.getElementById('total-sol').textContent=fmt(total);
+  updateGrand();
+}
+
+// ═══ PEINTURE ═══
+function calcPeinture(){
+  const surf=+document.getElementById('peinture-surf').value||0;
+  const hsp={250:2.5,280:2.8,300:3.1}[S.hsp]||2.5;
+  const coef=hsp/2.5;
+  const skipEnduit=document.getElementById('skip-enduit').checked;
+  const depose={tapisserie:6,'vieille-peinture':3,nu:0}[S['mur-existant']]||0;
+  const p1=surf*depose*coef;
+  const p2=skipEnduit?0:(S['enduit-type']==='plein'?surf*18*coef:surf*6);
+  const p3=surf*(S['peinture-qual']==='soigne'?16:12)*coef;
+  setSkip('step-p-2',skipEnduit);
+  setPrice('price-p-1',p1);setPrice('price-p-2',p2);setPrice('price-p-3',p3);
+  const t=p1+p2+p3; totals.peinture=t;
+  document.getElementById('subtotal-peinture').textContent=fmt(t);
+  document.getElementById('total-peinture').textContent=fmt(t);
+  updateGrand();
+}
+
+// ═══ FENÊTRES ═══
+function calcFen(){
+  const petit=+document.getElementById('fen-petit').value||0;
+  const standard=+document.getElementById('fen-standard').value||0;
+  const baie=+document.getElementById('fen-baie').value||0;
+  const total_fen=petit+standard+baie;
+  const skipReb=document.getElementById('skip-fen-reb').checked;
+
+  const depose_volet={aucun:0,bois:60,roulant:90}[S['volet-existant']]||0;
+  const p1=total_fen*(80+depose_volet);
+
+  const prixFen={petit:420,standard:620,baie:1050};
+  const p2=petit*prixFen.petit+standard*prixFen.standard+baie*prixFen.baie;
+
+  const prixVoletNeuf={aucun:0,bois:280,alu:320,'roulant-elec':480}[S['volet-neuf']]||0;
+  const p3=total_fen*prixVoletNeuf;
+
+  const p4=skipReb?0:total_fen*60;
+  setSkip('step-fen-rebouchage',skipReb);
+
+  setPrice('price-fen-1',p1);setPrice('price-fen-2',p2);setPrice('price-fen-3',p3);setPrice('price-fen-4',p4);
+  const t=p1+p2+p3+p4; totals.fen=t;
+  document.getElementById('subtotal-fen').textContent=fmt(t);
+  document.getElementById('total-fen').textContent=fmt(t);
+  updateGrand();
+}
+
+// ═══ ÉLECTRICITÉ ═══
+function calcElec(){
+  const surf=+document.getElementById('elec-surf').value||0;
+  const pieces=+document.getElementById('elec-pieces').value||1;
+  const skipVmc=document.getElementById('skip-vmc').checked;
+  const vmcNb=+document.getElementById('vmc-nb').value||1;
+
+  const p1=surf*8;
+  const p2=surf*(S['cable-passage']==='saigne'?58:45)+900;
+  const p3=surf*3+pieces*60+(S.appareillage==='standard'?surf*4:0);
+  const p4=skipVmc?0:vmcNb*(S['vmc-type']==='double'?1800:750);
+
+  setSkip('step-vmc',skipVmc);
+  setPrice('price-elec-1',p1);setPrice('price-elec-2',p2);setPrice('price-elec-3',p3);setPrice('price-elec-4',p4);
+  const t=p1+p2+p3+p4; totals.elec=t;
+  document.getElementById('subtotal-elec').textContent=fmt(t);
+  document.getElementById('total-elec').textContent=fmt(t);
+  updateGrand();
+}
+
+// ═══ CLIMATISATION ═══
+function calcClim(){
+  const nb=+document.getElementById('clim-nb').value||1;
+  const u={2500:950,3500:1100,5000:1400}[S['clim-puissance']]||1100;
+  const p2=S['clim-config']==='multi'?1300+nb*550:nb*(u+150);
+  setPrice('price-clim-2',p2);
+  totals.clim=p2;
+  document.getElementById('subtotal-clim').textContent=fmt(p2);
+  document.getElementById('total-clim').textContent=fmt(p2);
+  updateGrand();
+}
+
+// ═══ SALLE DE BAINS ═══
+function calcSDB(){
+  const nb=+document.getElementById('sdb-nb').value||1;
+  const surf={petit:3.5,moyen:6,grand:9}[S['sdb-surf']]||3.5;
+  const wcp=S['sdb-wc-presence'];
+  document.getElementById('wc-type-row').style.display=(wcp==='non')?'none':'flex';
+
+  const p1=nb*(400+surf*30);
+  const cp={eco:55,standard:75,premium:110}[S['sdb-carrelage']]||55;
+  const p2=nb*surf*cp*3.5;
+  const dp={bac:450,italienne:1200,baignoire:700}[S['sdb-douche']]||450;
+  const p3=nb*dp;
+  const mp={simple:280,meuble:450,meuble80:620}[S['sdb-meuble']]||280;
+  const p4=nb*mp;
+  let p5=0;
+  if(wcp!=='non'){const base=S['sdb-wc-type']==='suspendu'?750:280;p5=nb*base;}
+  const p6=nb*(600+surf*40);
+
+  setPrice('price-sdb-1',p1);setPrice('price-sdb-2',p2);setPrice('price-sdb-3',p3);
+  setPrice('price-sdb-4',p4);setPrice('price-sdb-5',p5);setPrice('price-sdb-6',p6);
+  const t=p1+p2+p3+p4+p5+p6; totals.sdb=t;
+  document.getElementById('subtotal-sdb').textContent=fmt(t);
+  document.getElementById('total-sdb').textContent=fmt(t);
+  updateGrand();
+}
+
+// ═══ CUISINE ═══
+function calcCuisine(){
+  const nb=+document.getElementById('cuisine-nb').value||1;
+  const lin=+document.getElementById('cuisine-lin').value||2;
+  const skipCred=document.getElementById('skip-credence').checked;
+
+  const p1=nb*(250+lin*80);
+  const gp={eco:300,standard:450,premium:750}[S['cuisine-gamme']]||300;
+  const pdt=S.pdtrav==='quartz'?lin*200:lin*80;
+  const p2=nb*(lin*gp*1.6+400+pdt);
+  const p3=skipCred?0:nb*lin*(S['credence-type']==='verre'?200:120);
+  setSkip('step-c-credence',skipCred);
+  const p4=nb*350;
+
+  const electro={
+    plaque:{vitroceramique:180,induction:350,non:0}[S['electro-plaque']]||0,
+    four:S['electro-four']==='oui'?250:0,
+    mo:S['electro-mo']==='oui'?100:0,
+    frigo:S['electro-frigo']==='oui'?350:0,
+    hotte:S['electro-hotte']==='oui'?220:0,
+  };
+  const p5=nb*Object.values(electro).reduce((a,b)=>a+b,0);
+
+  setPrice('price-c-1',p1);setPrice('price-c-2',p2);setPrice('price-c-3',p3);
+  setPrice('price-c-4',p4);setPrice('price-c-5',p5);
+  const t=p1+p2+p3+p4+p5; totals.cuisine=t;
+  document.getElementById('subtotal-cuisine').textContent=fmt(t);
+  document.getElementById('total-cuisine').textContent=fmt(t);
+  updateGrand();
+}
+
+// ═══ AMEUBLEMENT / DÉCO ═══
+let decoZones=[];let decoZoneId=0;
+const PIECE_TYPES={
+  chambre:{label:'Chambre',items:{lit:{label:'Lit + sommier + matelas',prix:400},chevet:{label:'Table(s) de chevet',prix:80},armoire:{label:'Armoire / penderie',prix:250},rideau:{label:'Rideaux + tringle',prix:80},luminaire:{label:'Luminaire',prix:40},linge:{label:'Linge de lit (couette + oreillers + draps x2)',prix:80},deco_murale:{label:'Décoration murale (cadres, miroir, affiches)',prix:60}}},
+  salon:{label:'Salon / séjour',items:{canape:{label:'Canapé',prix:500},table:{label:'Table basse + TV',prix:200},rangement:{label:'Meuble rangement',prix:180},table_manger:{label:'Table à manger',prix:220},chaises:{label:'Chaises (x4)',prix:180},rideau:{label:'Rideaux + tringle',prix:100},luminaire:{label:'Luminaires',prix:80},tapis:{label:'Tapis',prix:80},deco_murale:{label:'Décoration murale (cadres, plantes, affiches)',prix:80}}},
+  sdb:{label:'Salle de bains',items:{miroir:{label:'Miroir / armoire de toilette',prix:80},accessoires:{label:'Accessoires (porte-serviettes, patères...)',prix:60},linge:{label:'Linge de bain (serviettes x4 + tapis de bain)',prix:60},rideau_douche:{label:'Rideau de douche (si bac)',prix:25},luminaire:{label:'Luminaire',prix:40}}},
+  cuisine:{label:'Cuisine (équipement)',items:{vaisselle:{label:'Vaisselle (assiettes, verres, couverts)',prix:80},casseroles:{label:'Casseroles + poêles',prix:60},ustensiles:{label:'Ustensiles + couteaux',prix:40},linge_cuisine:{label:'Linge de cuisine (torchons...)',prix:20},custom_pe:{label:'Petit électroménager + divers',prix:0,custom:true}}},
+  bureau:{label:'Bureau / chambre bureau',items:{bureau:{label:'Bureau + chaise',prix:200},rangement:{label:'Étagères / rangement',prix:120},rideau:{label:'Rideaux + tringle',prix:80},luminaire:{label:'Luminaire',prix:40}}},
+  entree:{label:'Entrée / couloir',items:{rangement:{label:'Meuble entrée / patère',prix:120},miroir:{label:'Miroir',prix:60},luminaire:{label:'Luminaire',prix:40}}},
+  custom:{label:'Pièce personnalisée',items:{mobilier:{label:'Mobilier',prix:300},textiles:{label:'Textiles + rideaux',prix:100},luminaires:{label:'Luminaires',prix:60},divers:{label:'Divers / accessoires',prix:80}}},
+};
+
+function addPieceDeco(type,name){
+  const t=type||'chambre';
+  const id='dp'+(decoZoneId++);
+  const def=PIECE_TYPES[t];
+  const items={};
+  Object.entries(def.items).forEach(([k,v])=>{items[k]={included:true,prix:v.prix,custom:v.custom||false};});
+  decoZones.push({id,type:t,name:name||(def.label+' '+(decoZoneId)),items});
+  renderDecoZones();
+}
+
+function removeDecoZone(id){
+  decoZones=decoZones.filter(z=>z.id!==id);
+  renderDecoZones();
+}
+
+function toggleDecoItem(zid,ikey){
+  const z=decoZones.find(z=>z.id===zid); if(!z)return;
+  z.items[ikey].included=!z.items[ikey].included;
+  renderDecoZones();
+}
+
+function setDecoType(zid,type){
+  const z=decoZones.find(z=>z.id===zid); if(!z)return;
+  z.type=type;
+  const def=PIECE_TYPES[type];
+  const items={};
+  Object.entries(def.items).forEach(([k,v])=>{items[k]={included:true,prix:v.prix,custom:v.custom||false};});
+  z.items=items;
+  renderDecoZones();
+}
+
+function setCustomDecoPrice(zid,ikey,val){
+  const z=decoZones.find(z=>z.id===zid); if(!z)return;
+  z.items[ikey].prix=+val||0;
+  renderDecoZones();
+}
+
+function renderDecoZones(){
+  const cont=document.getElementById('pieces-deco');
+  cont.innerHTML='';
+  let grandTotal=0;
+  decoZones.forEach(z=>{
+    const def=PIECE_TYPES[z.type];
+    let total=0;
+    Object.entries(z.items).forEach(([k,v])=>{if(v.included)total+=v.prix||0;});
+    grandTotal+=total;
+
+    const typeOpts=Object.entries(PIECE_TYPES).map(([k,v])=>`<button class="toggle${z.type===k?' selected':''}" onclick="setDecoType('${z.id}','${k}')">${v.label}</button>`).join('');
+
+    const itemsHtml=Object.entries(def.items).map(([k,v])=>{
+      const item=z.items[k]||{included:true,prix:v.prix,custom:v.custom||false};
+      if(item.custom){
+        return `
+        <div class="deco-row" style="align-items:center;">
+          <span style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="toggleDecoItem('${z.id}','${k}')">
+            <span style="width:12px;height:12px;border-radius:3px;background:${item.included?'var(--accent)':'var(--border)'};display:inline-block;flex-shrink:0;"></span>
+            <span style="${item.included?'':'text-decoration:line-through;opacity:0.4;'}">${v.label}</span>
+          </span>
+          <input type="number" min="0" step="10" value="${item.prix||''}" placeholder="0" style="width:80px;font-size:0.72rem;" oninput="setCustomDecoPrice('${z.id}','${k}',this.value)" onclick="event.stopPropagation()">
+        </div>`;
+      }
+      return `
+      <div class="deco-row" style="cursor:pointer;" onclick="toggleDecoItem('${z.id}','${k}')">
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span style="width:12px;height:12px;border-radius:3px;background:${item.included?'var(--accent)':'var(--border)'};display:inline-block;flex-shrink:0;"></span>
+          <span style="${item.included?'':'text-decoration:line-through;opacity:0.4;'}">${v.label}</span>
+        </span>
+        <span class="deco-val" style="${item.included?'':'opacity:0.3;'}">${fmt(v.prix)}</span>
+      </div>`;
+    }).join('');
+
+    cont.innerHTML+=`
+    <div class="piece-deco">
+      <div class="piece-deco-header">
+        <input style="background:transparent;border:none;border-bottom:1px dashed var(--border);font-family:var(--sans);font-size:0.75rem;font-weight:600;width:160px;color:var(--text);padding:1px 3px;" value="${z.name}" oninput="setDecoName('${z.id}',this.value)">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="piece-deco-total">${fmt(total)}</span><button class="remove-btn" onclick="removeDecoZone('${z.id}')">✕</button></div>
+      </div>
+      <div class="control-row" style="margin-bottom:8px;"><div class="toggle-group">${typeOpts}</div></div>
+      ${itemsHtml}
+    </div>`;
+  });
+  totals.deco=grandTotal;
+  document.getElementById('subtotal-deco').textContent=fmt(grandTotal);
+  document.getElementById('total-deco').textContent=fmt(grandTotal);
+  updateGrand();
+}
+
+function setDecoName(id,val){const z=decoZones.find(z=>z.id===id);if(z)z.name=val;}
+
+// Init
+addZoneSol('Salon / séjour',30,'carrelage','non','carrelage','60x60');
+addZoneSol('Chambres',40,'carrelage','non','pvc');
+addZoneSol('Cuisine',10,'carrelage','autolissant','carrelage','30x60');
+
+addPieceDeco('chambre','Chambre 1');
+addPieceDeco('salon','Salon');
+addPieceDeco('sdb','Salle de bains');
+addPieceDeco('cuisine','Cuisine');
+
+calcPeinture();calcFen();calcElec();calcClim();calcSDB();calcCuisine();
+</script>
+</body>
+</html>
