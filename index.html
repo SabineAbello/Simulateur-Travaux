@@ -130,9 +130,11 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
   </div>
   <div class="wq">
     <div class="wq-label">3. Mode d'exploitation envisagé</div>
+    <div class="wq-sub">Détermine l'ameublement et les équipements à prévoir</div>
     <div class="tg">
-      <button class="t sel" id="wex-lld" onclick="setWex('lld')">Location longue durée meublée</button>
-      <button class="t" id="wex-lcd" onclick="setWex('lcd')">LCD / Airbnb</button>
+      <button class="t" id="wex-nue" onclick="setWex('nue')">LLD nue (pas d'ameublement)</button>
+      <button class="t sel" id="wex-lld" onclick="setWex('lld')">LLD meublée (meubles, pas de linge)</button>
+      <button class="t" id="wex-lcd" onclick="setWex('lcd')">LCD / Colocation (meubles + linge + équipements)</button>
     </div>
   </div>
   <button class="btn-primary" style="width:100%;justify-content:center;padding:.75rem;" onclick="launchFromWizard()">Créer la simulation &#8594;</button>
