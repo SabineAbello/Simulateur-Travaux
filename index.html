@@ -175,7 +175,8 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
     <div>
       <div class="slabel">Dépose tapisserie / décrépissage</div>
       <div class="sc">
-        <div class="cr"><label>Surface au sol (m²)</label><input type="number" id="peinture-surf" value="80" min="1" oninput="calcPeinture()"></div>
+        <div class="cr"><label>Surface au sol (m²)</label><input type="number" id="peinture-surf" value="80" min="1" oninput="calcPeinture()">
+        <span id="surf-mur-display" style="font-size:.65rem;color:var(--muted);">≈ 240 m² de murs</span></div>
         <div class="cr"><label>Revêtement existant</label><div class="tg">
           <button class="t sel" data-k="mur-existant" data-v="tapisserie" onclick="sT(this);calcPeinture()">Tapisserie</button>
           <button class="t" data-k="mur-existant" data-v="vieille-peinture" onclick="sT(this);calcPeinture()">Vieille peinture</button>
@@ -202,8 +203,9 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
   <div class="step active">
     <div class="snum">3</div>
     <div>
-      <div class="slabel">Peinture (sous-couche + finition)</div>
+      <div class="slabel">Peinture murs (sous-couche + 2 couches)</div>
       <div class="sc">
+        <div class="cr"><label>Nb de pièces</label><input type="number" id="peinture-pieces" value="5" min="1" max="20" oninput="calcPeinture()"></div>
         <div class="cr"><label>Qualité</label><div class="tg">
           <button class="t sel" data-k="peinture-qual" data-v="standard" onclick="sT(this);calcPeinture()">Standard</button>
           <button class="t" data-k="peinture-qual" data-v="soigne" onclick="sT(this);calcPeinture()">Soigné</button>
@@ -217,8 +219,22 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
     </div>
     <div class="sp" id="price-p-3">—</div>
   </div>
+  <div class="step active">
+    <div class="snum">4</div>
+    <div>
+      <div class="slabel">Peinture plafonds (sous-couche + 2 couches)</div>
+      <div class="sc">
+        <div class="cr" style="font-size:.68rem;color:var(--muted);">Surface plafond = surface au sol · tarif plus élevé (travail en hauteur)</div>
+        <div class="cr"><label>Plafonds à peindre</label><div class="tg">
+          <button class="t sel" data-k="plafond-etat" data-v="oui" onclick="sT(this);calcPeinture()">Oui (tous les plafonds)</button>
+          <button class="t" data-k="plafond-etat" data-v="non" onclick="sT(this);calcPeinture()">Non (murs seulement)</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-p-4">—</div>
+  </div>
 </div>
-<div class="subrow"><span>total murs</span><span id="subtotal-peinture">0 €</span></div>
+<div class="subrow"><span>total murs + plafonds</span><span id="subtotal-peinture">0 €</span></div>
 </div></div>
 
 <!-- FENÊTRES -->
@@ -230,6 +246,11 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
     <div>
       <div class="slabel">Dépose menuiseries + volets existants</div>
       <div class="sc">
+        <div class="cr"><label>Matériau neuf</label><div class="tg">
+          <button class="t sel" data-k="fen-materiau" data-v="pvc" onclick="sT(this);calcFen()">PVC</button>
+          <button class="t" data-k="fen-materiau" data-v="alu" onclick="sT(this);calcFen()">Aluminium</button>
+          <button class="t" data-k="fen-materiau" data-v="bois" onclick="sT(this);calcFen()">Bois</button>
+        </div></div>
         <div class="cr"><label>Petites (60×90)</label><input type="number" id="fen-petit" value="2" min="0" oninput="calcFen()"></div>
         <div class="cr"><label>Standard (100×120)</label><input type="number" id="fen-standard" value="3" min="0" oninput="calcFen()"></div>
         <div class="cr"><label>Baies / grandes</label><input type="number" id="fen-baie" value="1" min="0" oninput="calcFen()"></div>
@@ -366,6 +387,37 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
   </div>
 </div>
 <div class="subrow"><span>total plomberie</span><span id="subtotal-plomb">0 €</span></div>
+</div></div>
+
+<!-- CLOISONS -->
+<div class="card">
+<div class="card-header"><span class="card-title">Cloisons (création)</span><span class="card-total" id="total-cloison">0 €</span></div>
+<div class="card-body">
+  <div class="sk" style="margin-bottom:.65rem;"><input type="checkbox" id="skip-cloison" onchange="calcCloison()"><label for="skip-cloison" style="font-size:.75rem;font-weight:500;color:var(--accent2);">Pas de cloison à créer</label></div>
+  <div id="cloison-body"><div class="steps">
+    <div class="step active">
+      <div class="snum">1</div>
+      <div>
+        <div class="slabel">Nouvelle(s) cloison(s) en placo</div>
+        <div class="sc">
+          <div class="cr"><label>Linéaire (ml)</label><input type="number" id="cloison-ml" value="0" min="0" oninput="calcCloison()"><span style="font-size:.65rem;color:var(--muted)">1 ml = hauteur × 1 m</span></div>
+          <div class="cr"><label>Hauteur sous plafond (m)</label><input type="number" id="cloison-hsp" value="2.5" min="2" max="4" step="0.1" oninput="calcCloison()"></div>
+          <div class="cr"><label>Type</label><div class="tg">
+            <button class="t sel" data-k="cloison-type" data-v="standard" onclick="sT(this);calcCloison()">Standard BA13</button>
+            <button class="t" data-k="cloison-type" data-v="phonique" onclick="sT(this);calcCloison()">Phonique</button>
+            <button class="t" data-k="cloison-type" data-v="hydrofuge" onclick="sT(this);calcCloison()">Hydrofuge (SDB)</button>
+          </div></div>
+          <div class="cr"><label>Porte incluse ?</label><div class="tg">
+            <button class="t sel" data-k="cloison-porte" data-v="non" onclick="sT(this);calcCloison()">Non</button>
+            <button class="t" data-k="cloison-porte" data-v="oui" onclick="sT(this);calcCloison()">Oui (+1 par tranche 4 ml)</button>
+          </div></div>
+        </div>
+      </div>
+      <div class="sp" id="price-cloison">—</div>
+    </div>
+  </div></div>
+  <div class="ib">Prix incluent ossature métal, plaques, joints, finitions prêtes à peindre. Hors électricité dans la cloison.</div>
+  <div class="subrow"><span>total cloisons</span><span id="subtotal-cloison">0 €</span></div>
 </div></div>
 
 <!-- CLIMATISATION -->
@@ -539,14 +591,16 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
 <!-- CUISINE -->
 <div class="card">
 <div class="card-header"><span class="card-title">Cuisine</span><span class="card-total" id="total-cuisine">0 €</span></div>
-<div class="card-body"><div class="steps">
+<div class="card-body">
+  <div class="sk" style="margin-bottom:.65rem;"><input type="checkbox" id="skip-cuisine" onchange="calcCuisine()"><label for="skip-cuisine" style="font-size:.75rem;font-weight:500;color:var(--accent2);">Cuisine en bon état — pas de travaux</label></div>
+  <div id="cuisine-body"><div class="steps">
   <div class="step active">
     <div class="snum">1</div>
     <div>
       <div class="slabel">Dépose ancienne cuisine</div>
       <div class="sc">
-        <div class="cr"><label>Nb de cuisines</label><input type="number" id="cuisine-nb" value="1" min="1" max="8" oninput="calcCuisine()"></div>
-        <div class="cr"><label>Linéaire meubles (m)</label><input type="number" id="cuisine-lin" value="2" min="1" max="10" step="0.5" oninput="calcCuisine()"></div>
+        <div class="cr"><label>Nb de cuisines</label><input type="number" id="cuisine-nb" value="1" min="0" max="8" oninput="calcCuisine()"></div>
+        <div class="cr"><label>Linéaire meubles (m)</label><input type="number" id="cuisine-lin" value="2" min="0" max="10" step="0.5" oninput="calcCuisine()"></div>
       </div>
     </div>
     <div class="sp" id="price-c-1">—</div>
@@ -625,6 +679,7 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
     <div class="sp" id="price-c-5">—</div>
   </div>
 </div>
+</div><!-- end cuisine-body -->
 <div class="subrow"><span>total cuisine</span><span id="subtotal-cuisine">0 €</span></div>
 </div></div>
 
@@ -675,7 +730,7 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
     <div class="excel-box" id="excel-export">—</div>
     <button onclick="copyExcel()" style="margin-top:.5rem;background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:.3rem .8rem;font-size:.7rem;cursor:pointer;font-family:var(--mono);">Copier</button>
   </div>
-  <div class="sdiv">Rappel · obtenir 3 devis · variation ±30% selon artisan · tarifs Narbonne 2025</div>
+  <div class="sdiv">Prix TTC fournitures + pose · sources marché 2025-2026 Occitanie · obtenir 3 devis · variation ±25% selon artisan et état réel du bien</div>
 </div>
 </div>
 
@@ -686,7 +741,7 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
 // ═══ STATE ═══
 const DEF_S = {
   'mur-existant':'tapisserie','enduit-type':'rebouchage','peinture-qual':'standard','hsp':'250',
-  'volet-existant':'aucun','volet-neuf':'aucun',
+  'volet-existant':'aucun','volet-neuf':'aucun','fen-materiau':'pvc','cloison-type':'standard','cloison-porte':'non',
   'cable-passage':'goulotte','appareillage':'eco','vmc-type':'simple','interphone-type':'simple',
   'clim-config':'mono','clim-puissance':'2500',
   'plomb-etat':'partiel','chauffe-eau':'electrique',
@@ -714,7 +769,7 @@ function setSkip(id,skip){const el=document.getElementById(id);if(el)el.classLis
 function iv(id){return +document.getElementById(id)?.value||0;}
 function ck(id){return document.getElementById(id)?.checked||false;}
 
-let totals={sol:0,peinture:0,fen:0,elec:0,plomb:0,clim:0,special:0,sdb:0,cuisine:0,deco:0,libretrav:0,libredeco:0};
+let totals={sol:0,peinture:0,fen:0,elec:0,plomb:0,clim:0,cloison:0,special:0,sdb:0,cuisine:0,deco:0,libretrav:0,libredeco:0};
 
 // ═══ WIZARD ═══
 let wizState={niveau:'lourd',exploitation:'lld'};
@@ -739,6 +794,7 @@ function resetForm(surf,niveau,exploitation){
   // Set inputs
   const setV=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;};
   setV('peinture-surf',surf); setV('elec-surf',surf); setV('plomb-surf',surf);
+  setV('peinture-pieces',Math.round(surf/18)||4);
   setV('fen-petit',2); setV('fen-standard',Math.round(surf/25)); setV('fen-baie',1);
   setV('elec-pieces',Math.round(surf/18)); setV('vmc-nb',1);
   setV('clim-nb',Math.max(2,Math.round(surf/25))); setV('sdb-nb',Math.round(surf/40)||1);
@@ -772,13 +828,16 @@ function resetForm(surf,niveau,exploitation){
   addZoneSol('Chambres', Math.round(surf*0.45), 'carrelage','non', isLCD?'parquet':'pvc');
   addZoneSol('Cuisine', Math.round(surf*0.12), 'carrelage','autolissant','carrelage','30x60');
 
-  // Déco de base
-  addPieceDeco('salon','Salon / séjour');
-  addPieceDeco('chambre','Chambre 1');
-  if(Math.round(surf/40)>=2) addPieceDeco('chambre','Chambre 2');
-  addPieceDeco('sdb','Salle de bains');
-  addPieceDeco('cuisine','Cuisine');
-  if(isLCD) addPieceDeco('lcd','Équipements LCD');
+  // Déco de base selon exploitation
+  const isNue = exploitation==='nue';
+  if(!isNue){
+    addPieceDeco('salon','Salon / séjour');
+    addPieceDeco('chambre','Chambre 1');
+    if(Math.round(surf/40)>=2) addPieceDeco('chambre','Chambre 2');
+    addPieceDeco('sdb','Salle de bains');
+    addPieceDeco('cuisine','Cuisine');
+    if(isLCD) addPieceDeco('lcd','Équipements LCD / Colocation');
+  }
 
   // Électroménager selon exploitation
   if(moyen||lourd){
@@ -793,9 +852,9 @@ function resetForm(surf,niveau,exploitation){
 
 // ═══ SOLS ═══
 let solZones=[],solZoneId=0;
-const SOL_TYPES={carrelage:{label:'Carrelage',formats:{'30x60':{prix:45},'60x60':{prix:52},grand:{prix:65}}},pvc:{label:'Sol PVC',prix:30},parquet:{label:'Parquet stratifié',prix:38}};
-const DEPOSE_T={carrelage:{label:'Carrelage',prix:8},parquet:{label:'Parquet',prix:6},moquette:{label:'Moquette',prix:4},rien:{label:'Rien',prix:0}};
-const RAGR_T={non:{label:'Non nécessaire',prix:0},autolissant:{label:'Autolissant',prix:14},epais:{label:'Épais',prix:22}};
+const SOL_TYPES={carrelage:{label:'Carrelage (fourni+posé)',formats:{'30x60':{prix:90},'60x60':{prix:105},grand:{prix:130}}},pvc:{label:'Sol PVC (fourni+posé)',prix:55},parquet:{label:'Parquet stratifié (fourni+posé)',prix:70}};
+const DEPOSE_T={carrelage:{label:'Carrelage',prix:20},parquet:{label:'Parquet',prix:15},moquette:{label:'Moquette',prix:8},rien:{label:'Rien',prix:0}};
+const RAGR_T={non:{label:'Non nécessaire',prix:0},autolissant:{label:'Autolissant',prix:25},epais:{label:'Épais (>5mm)',prix:35}};
 
 function addZoneSol(name,surf,depose,ragr,type,format){
   const id='sz'+(solZoneId++);
@@ -810,8 +869,9 @@ function solZoneTotal(z){
   const r=RAGR_T[z.ragr]||RAGR_T.non;
   let pose=0;
   if(z.type==='carrelage'){const f=SOL_TYPES.carrelage.formats[z.format]||SOL_TYPES.carrelage.formats['30x60'];pose=z.surf*f.prix;}
-  else pose=z.surf*(SOL_TYPES[z.type]?.prix||30);
-  return z.surf*(d.prix+r.prix)+pose;
+  else pose=z.surf*(SOL_TYPES[z.type]?.prix||55);
+  const plinthe=z.surf*0.4*15;
+  return z.surf*(d.prix+r.prix)+pose+plinthe;
 }
 
 function renderSolZones(){
@@ -838,12 +898,15 @@ function calcSolTotal(){
 
 // ═══ PEINTURE ═══
 function calcPeinture(){
-  const surf=iv('peinture-surf'),hsp={250:2.5,280:2.8,300:3.1}[S.hsp]||2.5,coef=hsp/2.5;
+  const surf=iv('peinture-surf'),hsp={250:2.5,280:2.8,300:3.1}[S.hsp]||2.5;
+  const coefMural=hsp/2.5*3.0;
+  const surfMur=surf*coefMural;
   const skip=ck('skip-enduit');
-  const p1=surf*({tapisserie:6,'vieille-peinture':3,nu:0}[S['mur-existant']]||0)*coef;
-  const p2=skip?0:(S['enduit-type']==='plein'?surf*18*coef:surf*6);
-  const p3=surf*(S['peinture-qual']==='soigne'?16:12)*coef;
+  const p1=surfMur*({tapisserie:18,'vieille-peinture':10,nu:0}[S['mur-existant']]||0);
+  const p2=skip?0:(S['enduit-type']==='plein'?surfMur*20:surfMur*8);
+  const p3=surfMur*(S['peinture-qual']==='soigne'?38:28);
   setSkip('step-p-2',skip);setP('price-p-1',p1);setP('price-p-2',p2);setP('price-p-3',p3);
+  const dispEl=document.getElementById('surf-mur-display');if(dispEl)dispEl.textContent='≈ '+Math.round(surfMur)+' m² de murs';
   const t=p1+p2+p3;totals.peinture=t;
   document.getElementById('subtotal-peinture').textContent=fmt(t);document.getElementById('total-peinture').textContent=fmt(t);updateGrand();
 }
@@ -852,10 +915,12 @@ function calcPeinture(){
 function calcFen(){
   const nb={p:iv('fen-petit'),s:iv('fen-standard'),b:iv('fen-baie')};
   const tot=nb.p+nb.s+nb.b;const skip=ck('skip-fen-reb');
-  const p1=tot*(80+({aucun:0,bois:60,roulant:90}[S['volet-existant']]||0));
-  const p2=nb.p*420+nb.s*620+nb.b*1050;
-  const p3=tot*({aucun:0,bois:280,alu:320,'roulant-elec':480}[S['volet-neuf']]||0);
-  const p4=skip?0:tot*60;
+  const matPrix={pvc:{p:620,s:980,b:1500},alu:{p:900,s:1300,b:2200},bois:{p:1100,s:1500,b:2500}}[S['fen-materiau']]||{p:620,s:980,b:1500};
+  const depose_volet={aucun:0,bois:80,roulant:120}[S['volet-existant']]||0;
+  const p1=tot*(120+depose_volet);
+  const p2=nb.p*matPrix.p+nb.s*matPrix.s+nb.b*matPrix.b;
+  const p3=tot*({aucun:0,bois:320,alu:400,'roulant-elec':580}[S['volet-neuf']]||0);
+  const p4=skip?0:tot*80;
   setSkip('step-fen-reb',skip);setP('price-fen-1',p1);setP('price-fen-2',p2);setP('price-fen-3',p3);setP('price-fen-4',p4);
   const t=p1+p2+p3+p4;totals.fen=t;
   document.getElementById('subtotal-fen').textContent=fmt(t);document.getElementById('total-fen').textContent=fmt(t);updateGrand();
@@ -865,9 +930,11 @@ function calcFen(){
 function calcElec(){
   const surf=iv('elec-surf'),pieces=iv('elec-pieces')||1;
   const skipVmc=ck('skip-vmc'),skipIph=ck('skip-interphone');
-  const p1=surf*(S['cable-passage']==='saigne'?66:53)+900+surf*3+pieces*60+(S.appareillage==='standard'?surf*4:0);
-  const p2=skipVmc?0:iv('vmc-nb')*(S['vmc-type']==='double'?1800:750);
-  const p3=skipIph?0:iv('interphone-nb')*(S['interphone-type']==='visiophone'?600:280);
+  const baseRatio=S['cable-passage']==='saigne'?175:145;
+  const appAdd=S.appareillage==='standard'?15:0;
+  const p1=surf*(baseRatio+appAdd)+1200;
+  const p2=skipVmc?0:iv('vmc-nb')*(S['vmc-type']==='double'?2200:900);
+  const p3=skipIph?0:iv('interphone-nb')*(S['interphone-type']==='visiophone'?800:350);
   setSkip('step-vmc',skipVmc);setSkip('step-interphone',skipIph);
   setP('price-elec-1',p1);setP('price-elec-2',p2);setP('price-elec-3',p3);
   const t=p1+p2+p3;totals.elec=t;
@@ -878,11 +945,27 @@ function calcElec(){
 function calcPlomb(){
   const surf=iv('plomb-surf');
   const skipCE=ck('skip-chauffe-eau');
-  const p1=surf*({bon:12,partiel:28,tout:55}[S['plomb-etat']]||28);
-  const p2=skipCE?0:iv('chauffe-eau-nb')*(S['chauffe-eau']==='thermo'?1800:700);
+  const p1=surf*({bon:25,partiel:65,tout:90}[S['plomb-etat']]||65);
+  const p2=skipCE?0:iv('chauffe-eau-nb')*(S['chauffe-eau']==='thermo'?2200:900);
   setSkip('step-chauffe-eau',skipCE);setP('price-plomb-1',p1);setP('price-plomb-2',p2);
   const t=p1+p2;totals.plomb=t;
   document.getElementById('subtotal-plomb').textContent=fmt(t);document.getElementById('total-plomb').textContent=fmt(t);updateGrand();
+}
+
+// ═══ CLOISONS ═══
+function calcCloison(){
+  const skip=ck('skip-cloison');
+  const body=document.getElementById('cloison-body');
+  if(body) body.style.opacity=skip?'0.35':'1';
+  if(skip){setP('price-cloison',0);totals.cloison=0;document.getElementById('subtotal-cloison').textContent=fmt(0);document.getElementById('total-cloison').textContent=fmt(0);updateGrand();return;}
+  const ml=iv('cloison-ml')||0,hsp=+document.getElementById('cloison-hsp')?.value||2.5;
+  if(ml===0){setP('price-cloison',0);totals.cloison=0;document.getElementById('subtotal-cloison').textContent=fmt(0);document.getElementById('total-cloison').textContent=fmt(0);updateGrand();return;}
+  const surfCloison=ml*hsp;
+  const prixM2={standard:45,phonique:58,hydrofuge:55}[S['cloison-type']]||45;
+  const porte=S['cloison-porte']==='oui'?Math.ceil(ml/4)*800:0;
+  const total=surfCloison*prixM2+porte;
+  setP('price-cloison',total);
+  totals.cloison=total;document.getElementById('subtotal-cloison').textContent=fmt(total);document.getElementById('total-cloison').textContent=fmt(total);updateGrand();
 }
 
 // ═══ CLIMATISATION ═══
@@ -924,7 +1007,20 @@ function calcSDB(){
 
 // ═══ CUISINE ═══
 function calcCuisine(){
-  const nb=iv('cuisine-nb')||1,lin=iv('cuisine-lin')||2,skipCr=ck('skip-credence');
+  const skip=ck('skip-cuisine');
+  const body=document.getElementById('cuisine-body');
+  if(body) body.style.opacity=skip?'0.35':'1';
+  if(skip){
+    ['price-c-1','price-c-2','price-c-3','price-c-4','price-c-5'].forEach(id=>setP(id,0));
+    totals.cuisine=0;
+    document.getElementById('subtotal-cuisine').textContent=fmt(0);document.getElementById('total-cuisine').textContent=fmt(0);updateGrand();return;
+  }
+  const nb=iv('cuisine-nb'),lin=iv('cuisine-lin'),skipCr=ck('skip-credence');
+  if(nb===0||lin===0){
+    ['price-c-1','price-c-2','price-c-3','price-c-4','price-c-5'].forEach(id=>setP(id,0));
+    totals.cuisine=0;
+    document.getElementById('subtotal-cuisine').textContent=fmt(0);document.getElementById('total-cuisine').textContent=fmt(0);updateGrand();return;
+  }
   const gp={eco:300,standard:450,premium:750}[S['cuisine-gamme']]||300;
   const pdt=S.pdtrav==='quartz'?lin*200:lin*80;
   const p1=nb*(250+lin*80);
@@ -1017,7 +1113,7 @@ function calcLignesLibres(cat){
 
 // ═══ GRAND TOTAL ═══
 function updateGrand(){
-  const trav=totals.sol+totals.peinture+totals.fen+totals.elec+totals.plomb+totals.clim+totals.special+totals.sdb+totals.cuisine+totals.libretrav;
+  const trav=totals.sol+totals.peinture+totals.fen+totals.elec+totals.plomb+totals.clim+totals.cloison+totals.special+totals.sdb+totals.cuisine+totals.libretrav;
   const deco=totals.deco+totals.libredeco;
   const total=trav+deco;
   const surf=iv('elec-surf')||80;
@@ -1030,7 +1126,7 @@ function updateGrand(){
   document.getElementById('sum-ratio').textContent=surf>0?Math.round(trav/surf)+' €/m²':'—';
   updateExcel(trav,deco,total,surf);
 }
-function calcAll(){calcSolTotal();calcPeinture();calcFen();calcElec();calcPlomb();calcClim();calcSpecial();calcSDB();calcCuisine();renderDecoZones();}
+function calcAll(){calcSolTotal();calcPeinture();calcFen();calcElec();calcPlomb();calcCloison();calcClim();calcSpecial();calcSDB();calcCuisine();renderDecoZones();}
 
 // ═══ EXPORT EXCEL ═══
 function updateExcel(trav,deco,total,surf){
@@ -1074,8 +1170,8 @@ function saveSims(s){localStorage.setItem('simulations',JSON.stringify(s));}
 
 function collectState(){
   const inputs={};
-  ['peinture-surf','fen-petit','fen-standard','fen-baie','elec-surf','elec-pieces','vmc-nb','interphone-nb','chauffe-eau-nb','clim-nb','sdb-nb','cuisine-nb','cuisine-lin','plomb-surf','humidite-surf','combles-surf','bals-nb'].forEach(id=>{inputs[id]=document.getElementById(id)?.value;});
-  ['skip-enduit','skip-fen-reb','skip-vmc','skip-credence','skip-humidite','skip-combles','skip-exterieur','skip-interphone','skip-chauffe-eau'].forEach(id=>{inputs[id]=document.getElementById(id)?.checked;});
+  ['peinture-surf','peinture-pieces','fen-petit','fen-standard','fen-baie','elec-surf','elec-pieces','vmc-nb','interphone-nb','chauffe-eau-nb','clim-nb','sdb-nb','cuisine-nb','cuisine-lin','plomb-surf','humidite-surf','combles-surf','bals-nb','cloison-ml','cloison-hsp'].forEach(id=>{inputs[id]=document.getElementById(id)?.value;});
+  ['skip-enduit','skip-fen-reb','skip-vmc','skip-credence','skip-humidite','skip-combles','skip-exterieur','skip-interphone','skip-chauffe-eau','skip-cuisine','skip-cloison'].forEach(id=>{inputs[id]=document.getElementById(id)?.checked;});
   inputs['sim-notes']=document.getElementById('sim-notes')?.value;
   return{S:{...S},solZones:JSON.parse(JSON.stringify(solZones)),decoZones:JSON.parse(JSON.stringify(decoZones)),lignesLibres:JSON.parse(JSON.stringify(lignesLibres)),inputs,totals:{...totals}};
 }
