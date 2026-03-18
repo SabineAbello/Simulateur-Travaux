@@ -158,11 +158,17 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
 </header>
 <div id="save-toast" style="display:none;position:fixed;bottom:1.5rem;right:1.5rem;background:var(--accent2);color:#fff;padding:.6rem 1.2rem;border-radius:6px;font-size:.8rem;font-family:var(--mono);z-index:9999;"></div>
 
-<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;padding:.6rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap;">
-  <div style="display:flex;align-items:center;gap:.5rem;">
-    <span style="font-size:.68rem;color:var(--muted);font-family:var(--mono);">surface totale</span>
-    <span id="surf-badge" style="font-family:var(--mono);font-size:.9rem;font-weight:500;color:var(--text);">— m²</span>
-    <span style="font-size:.65rem;color:var(--muted);">(saisie au démarrage · utilisée pour les ratios €/m²)</span>
+<div style="margin-bottom:1rem;padding:.75rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:.6rem;">
+  <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:.5rem;">
+      <label style="font-size:.68rem;color:var(--muted);font-family:var(--mono);white-space:nowrap;">Surface totale (m²)</label>
+      <input type="number" id="form-surf" min="10" max="1000" value="80" style="width:70px;font-weight:600;" oninput="updateGrand();markUnsaved()" title="Surface totale du bien — utilisée pour les ratios €/m²">
+      <span style="font-size:.65rem;color:var(--muted);">utilisée pour les ratios €/m²</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:.5rem;flex:1;min-width:200px;">
+      <label style="font-size:.68rem;color:var(--muted);font-family:var(--mono);white-space:nowrap;">Hypothèses / version</label>
+      <input type="text" id="sim-hypothesis" placeholder="ex : scénario coloc 4 chambres, travaux lourds…" style="flex:1;" oninput="markUnsaved()">
+    </div>
   </div>
 </div>
 
@@ -722,6 +728,7 @@ function launchFromWizard(){
   const name=document.getElementById('wiz-name').value.trim()||'Nouvelle simulation';
   resetForm(surf,wizState.niveau,wizState.exploitation);
   document.getElementById('sim-name-input').value=name;
+  const formSurf=document.getElementById('form-surf');if(formSurf)formSurf.value=surf;
   document.getElementById('wizard-screen').style.display='none';
   document.getElementById('sim-view').style.display='block';
 }
@@ -804,6 +811,7 @@ function resetForm(surf,niveau,exploitation){
 
   syncToggles();
   document.getElementById('sim-notes').value='';
+  document.getElementById('sim-hypothesis').value='';
   calcAll();
 }
 
@@ -1077,7 +1085,7 @@ function updateGrand(){
   const trav=totals.sol+totals.peinture+totals.fen+totals.elec+totals.plomb+totals.clim+totals.cloison+totals.special+totals.sdb+totals.cuisine+totals.libretrav;
   const deco=totals.deco+totals.libredeco;
   const total=trav+deco;
-  const surf=iv('wiz-surf')||iv('elec-surf')||80;
+  const surf=iv('form-surf')||iv('wiz-surf')||iv('elec-surf')||80;
   updateSurfBadge();
   document.getElementById('grand-total-header').textContent=fmt(total);
   markUnsaved();
@@ -1235,9 +1243,10 @@ function saveSims(s){localStorage.setItem('simulations',JSON.stringify(s));}
 
 function collectState(){
   const inputs={};
-  ['wiz-surf','peinture-surf','peinture-pieces','fen-petit','fen-standard','fen-baie','elec-surf','elec-pieces','vmc-nb','interphone-nb','chauffe-eau-nb','clim-nb','sdb-nb','cuisine-nb','cuisine-lin','plomb-surf','humidite-surf','combles-surf','bals-nb','cloison-ml','cloison-hsp'].forEach(id=>{inputs[id]=document.getElementById(id)?.value;});
+  ['wiz-surf','form-surf','sim-hypothesis','peinture-surf','peinture-pieces','fen-petit','fen-standard','fen-baie','elec-surf','elec-pieces','vmc-nb','interphone-nb','chauffe-eau-nb','clim-nb','sdb-nb','cuisine-nb','cuisine-lin','plomb-surf','humidite-surf','combles-surf','bals-nb','cloison-ml','cloison-hsp'].forEach(id=>{inputs[id]=document.getElementById(id)?.value;});
   ['skip-enduit','skip-fen-reb','skip-volet-depose','skip-vmc','skip-credence','skip-humidite','skip-combles','skip-exterieur','skip-interphone','skip-chauffe-eau','skip-cuisine'].forEach(id=>{inputs[id]=document.getElementById(id)?.checked;});
   inputs['sim-notes']=document.getElementById('sim-notes')?.value;
+  inputs['sim-hypothesis']=document.getElementById('sim-hypothesis')?.value;
   return{S:{...S},solZones:JSON.parse(JSON.stringify(solZones)),sdbZones:JSON.parse(JSON.stringify(sdbZones)),cloisonZones:JSON.parse(JSON.stringify(cloisonZones)),decoZones:JSON.parse(JSON.stringify(decoZones)),lignesLibres:JSON.parse(JSON.stringify(lignesLibres)),inputs,totals:{...totals}};
 }
 function applyState(state){
@@ -1258,16 +1267,20 @@ function saveSimulation(){
   const sims=getAllSims();const state=collectState();
   const total=Object.values(totals).reduce((a,b)=>a+b,0);
   const date=new Date().toLocaleDateString('fr-FR');
-  if(currentSimId){const idx=sims.findIndex(s=>s.id===currentSimId);if(idx>=0){sims[idx]={...sims[idx],name,state,total,updatedAt:date};}else{sims.push({id:currentSimId,name,state,total,createdAt:date,updatedAt:date});}}
-  else{currentSimId=genId();sims.push({id:currentSimId,name,state,total,createdAt:date,updatedAt:date});}
+  const surf=iv('wiz-surf')||iv('elec-surf')||0;
+  const trav=totals.sol+totals.peinture+totals.fen+totals.elec+totals.plomb+totals.clim+totals.cloison+totals.special+totals.sdb+totals.cuisine+totals.libretrav;
+  const deco=totals.deco+totals.libredeco;
+  const exploitation=document.getElementById('wex-lcd')?.classList.contains('sel')?'LCD / Colocation':document.getElementById('wex-nue')?.classList.contains('sel')?'LLD nue':'LLD meublée';
+  const hypothesis=document.getElementById('sim-hypothesis')?.value||'';
+  const summary={surf,trav,deco,exploitation,hypothesis};
+  if(currentSimId){const idx=sims.findIndex(s=>s.id===currentSimId);if(idx>=0){sims[idx]={...sims[idx],name,state,total,summary,updatedAt:date};}else{sims.push({id:currentSimId,name,state,total,summary,createdAt:date,updatedAt:date});}}
+  else{currentSimId=genId();sims.push({id:currentSimId,name,state,total,summary,createdAt:date,updatedAt:date});}
   saveSims(sims);showToast('Simulation enregistrée !');markSaved();
 }
 function showToast(msg){const t=document.getElementById('save-toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
 function markUnsaved(){const d=document.getElementById('unsaved-dot');if(d)d.style.display='block';}
 function updateSurfBadge(){
-  const surf=iv('wiz-surf')||iv('elec-surf')||0;
-  const el=document.getElementById('surf-badge');
-  if(el&&surf>0)el.textContent=surf+' m²';
+  // wiz-surf is now editable inline - just trigger grand total refresh for ratio update
 }
 function markSaved(){const d=document.getElementById('unsaved-dot');if(d)d.style.display='none';}
 function goHome(){document.getElementById('sim-view').style.display='none';document.getElementById('wizard-screen').style.display='none';document.getElementById('home-screen').style.display='block';renderSimList();}
@@ -1282,7 +1295,15 @@ function duplicateCurrent(){
   const sims=getAllSims();const state=collectState();
   const total=Object.values(totals).reduce((a,b)=>a+b,0);
   const newId=genId();const date=new Date().toLocaleDateString('fr-FR');
-  sims.push({id:newId,name,state,total,createdAt:date,updatedAt:date});
+  const dsurf=iv('form-surf')||iv('wiz-surf')||80;
+  const dtrav=totals.sol+totals.peinture+totals.fen+totals.elec+totals.plomb+totals.clim+totals.cloison+totals.special+totals.sdb+totals.cuisine+totals.libretrav;
+  const ddeco=totals.deco+totals.libredeco;
+  const hypothesis=document.getElementById('sim-hypothesis')?.value||'';
+  // Try to read exploitation from current sim's saved summary, fallback to wizState
+  const curSim=currentSimId?getAllSims().find(s=>s.id===currentSimId):null;
+  const exploitation=(curSim&&curSim.summary&&curSim.summary.exploitation)||wizState&&wizState.exploitation||'lld';
+  const summary={surf:dsurf,trav:dtrav,deco:ddeco,exploitation,hypothesis};
+  sims.push({id:newId,name,state,total,summary,createdAt:date,updatedAt:date});
   saveSims(sims);currentSimId=newId;document.getElementById('sim-name-input').value=name;showToast('Simulation dupliquée !');
 }
 function deleteCurrent(){
@@ -1295,12 +1316,38 @@ function renderSimList(){
   const list=document.getElementById('sim-list');const empty=document.getElementById('sim-list-empty');
   if(!sims.length){list.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  list.innerHTML=sims.map(s=>`<div class="simcard" onclick="openSimulation('${s.id}')"><div style="flex:1;"><div class="scn">${s.name}</div><div class="scm">Modifié le ${s.updatedAt||s.createdAt||'—'}</div></div><div style="display:flex;align-items:center;gap:10px;"><div class="sct">${Math.round(s.total||0).toLocaleString('fr-FR')} €</div><div style="display:flex;gap:4px;" onclick="event.stopPropagation()"><button class="btn-ghost" style="font-size:.7rem;padding:3px 8px;" onclick="dupFromList('${s.id}')">Dupliquer</button><button style="background:transparent;border:1px solid #F09595;color:#A32D2D;border-radius:6px;padding:3px 8px;font-size:.7rem;cursor:pointer;font-family:var(--sans);" onclick="deleteFromList('${s.id}')">Suppr.</button></div></div></div>`).join('');
+  list.innerHTML=sims.map(s=>{
+    const sm=s.summary||{};
+    const surf=sm.surf||'—';
+    const trav=sm.trav!=null?Math.round(sm.trav).toLocaleString('fr-FR')+' €':'—';
+    const deco=sm.deco!=null?Math.round(sm.deco).toLocaleString('fr-FR')+' €':'—';
+    const explMap={'nue':'LLD nue','lld':'LLD meublée','lcd':'LCD / Colocation'};
+    const expl=explMap[sm.exploitation]||sm.exploitation||'—';
+    const hyp=sm.hypothesis?`<span style="font-style:italic;color:var(--muted);"> · ${sm.hypothesis}</span>`:'';
+    const ratioTrav=sm.surf&&sm.trav?Math.round(sm.trav/sm.surf)+' €/m²':'—';
+    const ratioDeco=sm.surf&&sm.deco?Math.round(sm.deco/sm.surf)+' €/m²':'—';
+    return `<div class="simcard" onclick="openSimulation('${s.id}')">
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;">
+          <div class="scn">${s.name}</div>
+          <div style="font-size:.7rem;color:var(--muted);">${surf} m² · ${expl}</div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);font-family:var(--mono);margin-top:3px;">
+          Travaux ${trav} (${ratioTrav}) · Déco ${deco} (${ratioDeco}) · Total <strong style="color:var(--accent);">${Math.round(s.total||0).toLocaleString('fr-FR')} €</strong>
+        </div>
+        <div style="font-size:.65rem;color:var(--muted);margin-top:2px;">Modifié le ${s.updatedAt||s.createdAt||'—'}${hyp}</div>
+      </div>
+      <div style="display:flex;gap:4px;margin-left:.75rem;flex-shrink:0;" onclick="event.stopPropagation()">
+        <button class="btn-ghost" style="font-size:.7rem;padding:3px 8px;" onclick="dupFromList('${s.id}')">Dupliquer</button>
+        <button style="background:transparent;border:1px solid #F09595;color:#A32D2D;border-radius:6px;padding:3px 8px;font-size:.7rem;cursor:pointer;font-family:var(--sans);" onclick="deleteFromList('${s.id}')">Suppr.</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 function dupFromList(id){
   const sims=getAllSims();const sim=sims.find(s=>s.id===id);if(!sim)return;
   const date=new Date().toLocaleDateString('fr-FR');
-  sims.push({...sim,id:genId(),name:sim.name+' — copie',createdAt:date,updatedAt:date});
+  sims.push({...sim,id:genId(),name:sim.name+' — copie',createdAt:date,updatedAt:date,meta:sim.meta||{}});
   saveSims(sims);renderSimList();
 }
 function deleteFromList(id){if(!confirm('Supprimer ?'))return;saveSims(getAllSims().filter(s=>s.id!==id));renderSimList();}
