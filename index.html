@@ -146,7 +146,8 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
 <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;border-bottom:1.5px solid var(--text);padding-bottom:.9rem;gap:1rem;flex-wrap:wrap;">
   <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:200px;">
     <button class="btn-ghost" onclick="goHome()" style="font-size:.75rem;padding:.35rem .75rem;">&#8592; Liste</button>
-    <input id="sim-name-input" type="text" placeholder="Nom de la simulation…" style="flex:1;border:none;border-bottom:1.5px solid var(--border);background:transparent;font-family:var(--sans);font-size:1rem;font-weight:600;color:var(--text);padding:2px 4px;outline:none;" onfocus="this.style.borderBottomColor='var(--accent)'" onblur="this.style.borderBottomColor='var(--border)'">
+    <input id="sim-name-input" type="text" placeholder="Nom de la simulation…" style="flex:1;border:none;border-bottom:1.5px solid var(--border);background:transparent;font-family:var(--sans);font-size:1rem;font-weight:600;color:var(--text);padding:2px 4px;outline:none;" onfocus="this.style.borderBottomColor='var(--accent)'" onblur="this.style.borderBottomColor='var(--border)'" oninput="markUnsaved()">
+    <span id="unsaved-dot" style="display:none;width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;" title="Modifications non enregistrées"></span>>
   </div>
   <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
     <div style="background:var(--text);color:#fff;font-family:var(--mono);font-size:1rem;padding:.45rem 1rem;border-radius:4px;" id="grand-total-header">0 €</div>
@@ -156,6 +157,14 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
   </div>
 </header>
 <div id="save-toast" style="display:none;position:fixed;bottom:1.5rem;right:1.5rem;background:var(--accent2);color:#fff;padding:.6rem 1.2rem;border-radius:6px;font-size:.8rem;font-family:var(--mono);z-index:9999;"></div>
+
+<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;padding:.6rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;flex-wrap:wrap;">
+  <div style="display:flex;align-items:center;gap:.5rem;">
+    <span style="font-size:.68rem;color:var(--muted);font-family:var(--mono);">surface totale</span>
+    <span id="surf-badge" style="font-family:var(--mono);font-size:.9rem;font-weight:500;color:var(--text);">— m²</span>
+    <span style="font-size:.65rem;color:var(--muted);">(saisie au démarrage · utilisée pour les ratios €/m²)</span>
+  </div>
+</div>
 
 <div class="grid">
 
@@ -805,20 +814,22 @@ const RAGR_T={non:{label:'Non nécessaire',prix:0},autolissant:{label:'Autolissa
 
 function addZoneSol(name,surf,depose,ragr,type,format){
   const id='sz'+(solZoneId++);
-  solZones.push({id,name:name||'Zone '+solZoneId,surf:surf||20,depose:depose||'carrelage',ragr:ragr||'non',type:type||'carrelage',format:format||'30x60'});
+  solZones.push({id,name:name||'Zone '+solZoneId,surf:+surf||20,depose:depose||'carrelage',ragr:ragr||'non',type:type||'carrelage',format:format||'30x60'});
   renderSolZones();
 }
 function removeSolZone(id){solZones=solZones.filter(z=>z.id!==id);renderSolZones();}
-function setSolField(id,field,val){const z=solZones.find(z=>z.id===id);if(z){z[field]=val;renderSolZones();}}
+function setSolField(id,field,val){const z=solZones.find(z=>z.id===id);if(z){z[field]=field==='surf'?+val||0:val;renderSolZones();}}
 
 function solZoneTotal(z){
+  const surf=+z.surf||0;
+  if(surf===0) return 0;
   const d=DEPOSE_T[z.depose]||DEPOSE_T.carrelage;
   const r=RAGR_T[z.ragr]||RAGR_T.non;
   let pose=0;
-  if(z.type==='carrelage'){const f=SOL_TYPES.carrelage.formats[z.format]||SOL_TYPES.carrelage.formats['30x60'];pose=z.surf*f.prix;}
-  else pose=z.surf*(SOL_TYPES[z.type]?.prix||55);
-  const plinthe=z.surf*0.4*15;
-  return z.surf*(d.prix+r.prix)+pose+plinthe;
+  if(z.type==='carrelage'){const f=SOL_TYPES.carrelage.formats[z.format]||SOL_TYPES.carrelage.formats['30x60'];pose=surf*f.prix;}
+  else pose=surf*(SOL_TYPES[z.type]?.prix||55);
+  const plinthe=surf*0.4*15;
+  return surf*(d.prix+r.prix)+pose+plinthe;
 }
 
 function renderSolZones(){
@@ -854,11 +865,11 @@ function calcPeinture(){
   const perimMoyen=4.5*Math.sqrt(surfPiece);
   const surfMur=perimMoyen*hsp*pieces;
   const surfPlafond=surf;
-  const p1=surfMur*({tapisserie:18,'vieille-peinture':10,nu:0}[S['mur-existant']]||0);
+  const p1=surfMur*({tapisserie:10,'vieille-peinture':6,nu:0}[S['mur-existant']]||0);
   const surfEnduit=doPlafond?surfMur+surfPlafond:surfMur;
-  const p2=skip?0:(S['enduit-type']==='plein'?surfEnduit*20:surfEnduit*8);
-  const p3=surfMur*(S['peinture-qual']==='soigne'?38:28);
-  const p4=doPlafond?surfPlafond*(S['peinture-qual']==='soigne'?42:32):0;
+  const p2=skip?0:(S['enduit-type']==='plein'?surfEnduit*15:surfEnduit*6);
+  const p3=surfMur*(S['peinture-qual']==='soigne'?32:24);
+  const p4=doPlafond?surfPlafond*(S['peinture-qual']==='soigne'?26:20):0;
   setSkip('step-p-2',skip);
   setP('price-p-1',p1);setP('price-p-2',p2);setP('price-p-3',p3);setP('price-p-4',p4);
   const dispEl=document.getElementById('surf-mur-display');
@@ -899,8 +910,8 @@ function calcElec(){
   const baseRatio=S['cable-passage']==='saigne'?175:145;
   const appAdd=S.appareillage==='standard'?15:0;
   const p1=surf===0?0:surf*(baseRatio+appAdd)+1200;
-  const p2=skipVmc?0:iv('vmc-nb')*(S['vmc-type']==='double'?2200:900);
-  const p3=skipIph?0:iv('interphone-nb')*(S['interphone-type']==='visiophone'?800:350);
+  const p2=(surf===0||skipVmc)?0:iv('vmc-nb')*(S['vmc-type']==='double'?2200:900);
+  const p3=(surf===0||skipIph)?0:iv('interphone-nb')*(S['interphone-type']==='visiophone'?800:350);
   setSkip('step-vmc',skipVmc);setSkip('step-interphone',skipIph);
   setP('price-elec-1',p1);setP('price-elec-2',p2);setP('price-elec-3',p3);
   const t=p1+p2+p3;totals.elec=t;
@@ -912,7 +923,7 @@ function calcPlomb(){
   const surf=iv('plomb-surf');
   const skipCE=ck('skip-chauffe-eau');
   const p1=surf===0?0:surf*({bon:25,partiel:65,tout:90}[S['plomb-etat']]||65);
-  const p2=skipCE?0:iv('chauffe-eau-nb')*(S['chauffe-eau']==='thermo'?2200:900);
+  const p2=(surf===0||skipCE)?0:iv('chauffe-eau-nb')*(S['chauffe-eau']==='thermo'?2200:900);
   setSkip('step-chauffe-eau',skipCE);setP('price-plomb-1',p1);setP('price-plomb-2',p2);
   const t=p1+p2;totals.plomb=t;
   document.getElementById('subtotal-plomb').textContent=fmt(t);document.getElementById('total-plomb').textContent=fmt(t);updateGrand();
@@ -990,8 +1001,8 @@ function calcCuisine(){
 
 // ═══ AMEUBLEMENT / DÉCO ═══
 const PIECE_TYPES={
-  chambre:{label:'Chambre',items:{lit:{label:'Lit + sommier + matelas',prix:400},chevet:{label:'Table(s) de chevet',prix:80},armoire:{label:'Armoire / penderie',prix:250},rideau:{label:'Rideaux + tringle',prix:80},luminaire:{label:'Luminaire',prix:40},linge:{label:'Linge de lit (couette + oreillers + draps ×2)',prix:80},deco_murale:{label:'Décoration murale',prix:60}}},
-  salon:{label:'Salon / séjour',items:{canape:{label:'Canapé',prix:500},table:{label:'Table basse + meuble TV',prix:200},rangement:{label:'Meuble rangement',prix:180},table_manger:{label:'Table à manger',prix:220},chaises:{label:'Chaises ×4',prix:180},rideau:{label:'Rideaux + tringle',prix:100},luminaire:{label:'Luminaires',prix:80},tapis:{label:'Tapis',prix:80},deco_murale:{label:'Décoration murale',prix:80}}},
+  chambre:{label:'Chambre',items:{lit:{label:'Lit + sommier + matelas',prix:500},chevet:{label:'Table(s) de chevet',prix:80},armoire:{label:'Armoire / penderie',prix:250},rideau:{label:'Rideaux + tringle',prix:80},luminaire:{label:'Luminaire',prix:40},linge:{label:'Linge de lit (couette + oreillers + draps ×2)',prix:80},deco_murale:{label:'Décoration murale',prix:60}}},
+  salon:{label:'Salon / séjour',items:{canape:{label:'Canapé',prix:500},table:{label:'Table basse + meuble TV',prix:200},rangement:{label:'Meuble rangement',prix:180},table_manger:{label:'Table à manger',prix:220,qtyitem:true,qtydefault:1},chaises:{label:'Chaises',prix:120,qtyitem:true,qtydefault:4},rideau:{label:'Rideaux + tringle',prix:100},luminaire:{label:'Luminaires',prix:80},tapis:{label:'Tapis',prix:80},deco_murale:{label:'Décoration murale',prix:80}}},
   sdb:{label:'Salle de bains',items:{miroir:{label:'Miroir / armoire de toilette',prix:80},accessoires:{label:'Accessoires (porte-serviettes, patères...)',prix:60},linge:{label:'Linge de bain (serviettes ×4 + tapis)',prix:60},rideau_douche:{label:'Rideau de douche',prix:25},luminaire:{label:'Luminaire',prix:40}}},
   cuisine:{label:'Cuisine',items:{vaisselle:{label:'Vaisselle (assiettes, verres, couverts)',prix:80},casseroles:{label:'Casseroles + poêles',prix:60},ustensiles:{label:'Ustensiles + couteaux',prix:40},linge_cuisine:{label:'Linge de cuisine',prix:20},custom_pe:{label:'Petit électroménager + divers',prix:0,custom:true}}},
   lcd:{label:'Équipements LCD / Airbnb',items:{literie:{label:'Literie supplémentaire (oreillers, couettes)',prix:120},serviettes:{label:'Serviettes de toilette extra',prix:60},cafetiere:{label:'Cafetière',prix:60},grille_pain:{label:'Grille-pain',prix:35},bouilloire:{label:'Bouilloire',prix:30},fer_repasser:{label:'Fer + table à repasser',prix:60},seche_cheveux:{label:'Sèche-cheveux',prix:25},produits_accueil:{label:'Kit accueil (savon, shampoing...)',prix:40},guides:{label:'Guides touristiques + livret accueil',prix:30}}},
@@ -1002,7 +1013,7 @@ const PIECE_TYPES={
 
 function addPieceDeco(type,name){
   const t=type||'chambre',id='dp'+(decoZoneId++),def=PIECE_TYPES[t],items={};
-  Object.entries(def.items).forEach(([k,v])=>{items[k]={included:true,prix:v.prix,custom:v.custom||false};});
+  Object.entries(def.items).forEach(([k,v])=>{items[k]={included:true,prix:v.prix,custom:v.custom||false,qtyitem:v.qtyitem||false,itemqty:v.qtydefault||1};});
   decoZones.push({id,type:t,name:name||(def.label+' '+decoZoneId),items,qty:1});
   renderDecoZones();
 }
@@ -1011,12 +1022,13 @@ function toggleDecoItem(zid,ikey){const z=decoZones.find(z=>z.id===zid);if(z){z.
 function setDecoType(zid,type){
   const z=decoZones.find(z=>z.id===zid);if(!z)return;
   z.type=type;const def=PIECE_TYPES[type],items={};
-  Object.entries(def.items).forEach(([k,v])=>{items[k]={included:true,prix:v.prix,custom:v.custom||false};});
+  Object.entries(def.items).forEach(([k,v])=>{items[k]={included:true,prix:v.prix,custom:v.custom||false,qtyitem:v.qtyitem||false,itemqty:v.qtydefault||1};});
   z.items=items;renderDecoZones();
 }
 function setCustomDecoPrice(zid,ikey,val){const z=decoZones.find(z=>z.id===zid);if(z){z.items[ikey].prix=+val||0;renderDecoZones();}}
 function setDecoName(id,val){const z=decoZones.find(z=>z.id===id);if(z)z.name=val;}
 function setDecoQty(id,val){const z=decoZones.find(z=>z.id===id);if(z){z.qty=Math.max(1,val||1);renderDecoZones();}}
+function setDecoItemQty(zid,ikey,val){const z=decoZones.find(z=>z.id===zid);if(z&&z.items[ikey]){z.items[ikey].itemqty=Math.max(1,+val||1);renderDecoZones();}}
 
 function renderDecoZones(){
   const cont=document.getElementById('pieces-deco');cont.innerHTML='';
@@ -1043,11 +1055,11 @@ function addLigneLibre(cat){
   renderLignesLibres(cat);
 }
 function removeLigneLibre(cat,id){lignesLibres[cat]=lignesLibres[cat].filter(l=>l.id!==id);renderLignesLibres(cat);}
-function setLigneLibre(cat,id,field,val){const l=lignesLibres[cat].find(l=>l.id===id);if(l){l[field]=field==='montant'?+val||0:val;calcLignesLibres(cat);}}
+function setLigneLibre(cat,id,field,val){const l=lignesLibres[cat].find(l=>l.id===id);if(l){l[field]=field==='montant'?(+val||0):val;calcLignesLibres(cat);}}
 function renderLignesLibres(cat){
   const cont=document.getElementById('lignes-libres-'+cat);cont.innerHTML='';
   lignesLibres[cat].forEach(l=>{
-    cont.innerHTML+=`<div style="display:flex;gap:6px;align-items:center;margin-bottom:5px;"><input type="text" placeholder="Description..." value="${l.label}" style="flex:1;" oninput="setLigneLibre('${cat}','${l.id}','label',this.value)"><input type="number" placeholder="0 €" value="${l.montant||''}" style="width:90px;" oninput="setLigneLibre('${cat}','${l.id}','montant',this.value)"><button class="rbtn" onclick="removeLigneLibre('${cat}','${l.id}')">✕</button></div>`;
+    cont.innerHTML+=`<div style="display:flex;gap:6px;align-items:center;margin-bottom:5px;"><input type="text" placeholder="Description..." value="${l.label}" style="flex:1;" oninput="setLigneLibre('${cat}','${l.id}','label',this.value)"><input type="number" placeholder="0" value="${l.montant||''}" style="width:90px;" oninput="setLigneLibre('${cat}','${l.id}','montant',+this.value)"><button class="rbtn" onclick="removeLigneLibre('${cat}','${l.id}')">✕</button></div>`;
   });
   calcLignesLibres(cat);
 }
@@ -1065,7 +1077,8 @@ function updateGrand(){
   const trav=totals.sol+totals.peinture+totals.fen+totals.elec+totals.plomb+totals.clim+totals.cloison+totals.special+totals.sdb+totals.cuisine+totals.libretrav;
   const deco=totals.deco+totals.libredeco;
   const total=trav+deco;
-  const surf=iv('elec-surf')||80;
+  const surf=iv('wiz-surf')||iv('elec-surf')||80;
+  updateSurfBadge();
   document.getElementById('grand-total-header').textContent=fmt(total);
   markUnsaved();
   document.getElementById('sum-total').textContent=fmt(total);
@@ -1076,6 +1089,7 @@ function updateGrand(){
   document.getElementById('sum-ratio').textContent=surf>0?Math.round(trav/surf)+' €/m² travaux':'—';
   document.getElementById('sum-ratio-deco').textContent=surf>0?Math.round(deco/surf)+' €/m² déco':'—';
   updateExcel(trav,deco,total,surf);
+  updateSurfBadge();
 }
 // ═══ MULTI-ZONES SDB ═══
 const SDB_DEF={surf:'petit',carrelage:'eco',douche:'bac',meuble:'simple',wc_presence:'oui',wc_type:'classique',depose:true};
@@ -1216,12 +1230,12 @@ function copyExcel(){
 
 // ═══ GESTION SIMULATIONS ═══
 function genId(){return 'sim_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);}
-function getAllSims(){try{return JSON.parse(localStorage.getItem('simulations')||'[]');}catch(e){return[];}}
+function getAllSims(){try{var d=localStorage.getItem('simulations');return d?JSON.parse(d):[];}catch(e){return[];}}
 function saveSims(s){localStorage.setItem('simulations',JSON.stringify(s));}
 
 function collectState(){
   const inputs={};
-  ['peinture-surf','peinture-pieces','fen-petit','fen-standard','fen-baie','elec-surf','elec-pieces','vmc-nb','interphone-nb','chauffe-eau-nb','clim-nb','sdb-nb','cuisine-nb','cuisine-lin','plomb-surf','humidite-surf','combles-surf','bals-nb','cloison-ml','cloison-hsp'].forEach(id=>{inputs[id]=document.getElementById(id)?.value;});
+  ['wiz-surf','peinture-surf','peinture-pieces','fen-petit','fen-standard','fen-baie','elec-surf','elec-pieces','vmc-nb','interphone-nb','chauffe-eau-nb','clim-nb','sdb-nb','cuisine-nb','cuisine-lin','plomb-surf','humidite-surf','combles-surf','bals-nb','cloison-ml','cloison-hsp'].forEach(id=>{inputs[id]=document.getElementById(id)?.value;});
   ['skip-enduit','skip-fen-reb','skip-volet-depose','skip-vmc','skip-credence','skip-humidite','skip-combles','skip-exterieur','skip-interphone','skip-chauffe-eau','skip-cuisine'].forEach(id=>{inputs[id]=document.getElementById(id)?.checked;});
   inputs['sim-notes']=document.getElementById('sim-notes')?.value;
   return{S:{...S},solZones:JSON.parse(JSON.stringify(solZones)),sdbZones:JSON.parse(JSON.stringify(sdbZones)),cloisonZones:JSON.parse(JSON.stringify(cloisonZones)),decoZones:JSON.parse(JSON.stringify(decoZones)),lignesLibres:JSON.parse(JSON.stringify(lignesLibres)),inputs,totals:{...totals}};
@@ -1229,6 +1243,7 @@ function collectState(){
 function applyState(state){
   S={...DEF_S,...state.S};
   solZones=state.solZones||[];solZoneId=solZones.length;
+  solZones.forEach(z=>{z.surf=+z.surf||0;});
   sdbZones=state.sdbZones||[];sdbZoneId=sdbZones.length;
   cloisonZones=state.cloisonZones||[];cloisonZoneId=cloisonZones.length;
   decoZones=state.decoZones||[];decoZoneId=decoZones.length;
@@ -1236,7 +1251,7 @@ function applyState(state){
   const inp=state.inputs||{};
   Object.entries(inp).forEach(([k,v])=>{const el=document.getElementById(k);if(!el)return;if(typeof v==='boolean')el.checked=v;else if(v!=null)el.value=v;});
   renderSolZones();renderSDBZones();renderCloisonZones();renderDecoZones();renderLignesLibres('trav');renderLignesLibres('deco');
-  calcAll();syncToggles();
+  calcAll();syncToggles();updateSurfBadge();;
 }
 function saveSimulation(){
   const name=document.getElementById('sim-name-input').value.trim()||'Simulation sans nom';
@@ -1249,6 +1264,11 @@ function saveSimulation(){
 }
 function showToast(msg){const t=document.getElementById('save-toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
 function markUnsaved(){const d=document.getElementById('unsaved-dot');if(d)d.style.display='block';}
+function updateSurfBadge(){
+  const surf=iv('wiz-surf')||iv('elec-surf')||0;
+  const el=document.getElementById('surf-badge');
+  if(el&&surf>0)el.textContent=surf+' m²';
+}
 function markSaved(){const d=document.getElementById('unsaved-dot');if(d)d.style.display='none';}
 function goHome(){document.getElementById('sim-view').style.display='none';document.getElementById('wizard-screen').style.display='none';document.getElementById('home-screen').style.display='block';renderSimList();}
 function openSimulation(id){
