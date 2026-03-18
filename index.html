@@ -1270,7 +1270,7 @@ function saveSimulation(){
   const surf=iv('wiz-surf')||iv('elec-surf')||0;
   const trav=totals.sol+totals.peinture+totals.fen+totals.elec+totals.plomb+totals.clim+totals.cloison+totals.special+totals.sdb+totals.cuisine+totals.libretrav;
   const deco=totals.deco+totals.libredeco;
-  const exploitation=document.getElementById('wex-lcd')?.classList.contains('sel')?'LCD / Colocation':document.getElementById('wex-nue')?.classList.contains('sel')?'LLD nue':'LLD meublée';
+  const exploitation=wizState?.exploitation||'lld';
   const hypothesis=document.getElementById('sim-hypothesis')?.value||'';
   const summary={surf,trav,deco,exploitation,hypothesis};
   if(currentSimId){const idx=sims.findIndex(s=>s.id===currentSimId);if(idx>=0){sims[idx]={...sims[idx],name,state,total,summary,updatedAt:date};}else{sims.push({id:currentSimId,name,state,total,summary,createdAt:date,updatedAt:date});}}
@@ -1288,6 +1288,15 @@ function openSimulation(id){
   const sim=getAllSims().find(s=>s.id===id);if(!sim)return;
   currentSimId=id;document.getElementById('sim-name-input').value=sim.name;
   applyState(sim.state);
+  // Synchro surface : form-surf peut manquer dans anciens saves — on prend wiz-surf en fallback
+  const fs=document.getElementById('form-surf');
+  const ws=document.getElementById('wiz-surf');
+  if(fs&&ws&&(!fs.value||fs.value==='80'||fs.value==='0')){
+    const savedWiz=sim.state?.inputs?.['wiz-surf']||sim.state?.inputs?.['form-surf'];
+    if(savedWiz) fs.value=savedWiz;
+    else if(ws.value&&ws.value!=='80') fs.value=ws.value;
+  }
+  updateGrand();
   document.getElementById('home-screen').style.display='none';document.getElementById('sim-view').style.display='block';
 }
 function duplicateCurrent(){
@@ -1316,26 +1325,32 @@ function renderSimList(){
   const list=document.getElementById('sim-list');const empty=document.getElementById('sim-list-empty');
   if(!sims.length){list.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
+  const exploitLabel={'lld':'LLD meublée','nue':'LLD nue','lcd':'LCD / Colocation'};
+  const fmtM=v=>v!=null&&v>0?Math.round(v).toLocaleString('fr-FR')+' €':'—';
   list.innerHTML=sims.map(s=>{
+    // summary présent (nouvelles sauvegardes) OU fallback sur state.inputs (anciennes)
     const sm=s.summary||{};
-    const surf=sm.surf||'—';
-    const trav=sm.trav!=null?Math.round(sm.trav).toLocaleString('fr-FR')+' €':'—';
-    const deco=sm.deco!=null?Math.round(sm.deco).toLocaleString('fr-FR')+' €':'—';
-    const explMap={'nue':'LLD nue','lld':'LLD meublée','lcd':'LCD / Colocation'};
-    const expl=explMap[sm.exploitation]||sm.exploitation||'—';
-    const hyp=sm.hypothesis?`<span style="font-style:italic;color:var(--muted);"> · ${sm.hypothesis}</span>`:'';
-    const ratioTrav=sm.surf&&sm.trav?Math.round(sm.trav/sm.surf)+' €/m²':'—';
-    const ratioDeco=sm.surf&&sm.deco?Math.round(sm.deco/sm.surf)+' €/m²':'—';
+    const inp=(s.state&&s.state.inputs)||{};
+    const surf=sm.surf||parseInt(inp['form-surf']||inp['wiz-surf']||inp['elec-surf'])||null;
+    const trav=sm.trav!=null?sm.trav:null;
+    const deco=sm.deco!=null?sm.deco:null;
+    const expl=exploitLabel[sm.exploitation]||sm.exploitation||'—';
+    const hyp=sm.hypothesis?` · <em style="font-size:.62rem;">${sm.hypothesis}</em>`:'';
+    const ratioTrav=surf&&trav?Math.round(trav/surf)+' €/m²':'—';
+    const ratioDeco=surf&&deco?Math.round(deco/surf)+' €/m²':'—';
+    const surfTxt=surf?surf+' m²':'—';
     return `<div class="simcard" onclick="openSimulation('${s.id}')">
-      <div style="flex:1;">
-        <div style="display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;margin-bottom:.3rem;">
           <div class="scn">${s.name}</div>
-          <div style="font-size:.7rem;color:var(--muted);">${surf} m² · ${expl}</div>
+          <div style="font-size:.7rem;color:var(--muted);font-family:var(--mono);">${surfTxt} · ${expl}</div>
         </div>
-        <div style="font-size:.68rem;color:var(--muted);font-family:var(--mono);margin-top:3px;">
-          Travaux ${trav} (${ratioTrav}) · Déco ${deco} (${ratioDeco}) · Total <strong style="color:var(--accent);">${Math.round(s.total||0).toLocaleString('fr-FR')} €</strong>
+        <div style="font-size:.72rem;font-family:var(--mono);display:flex;gap:1.2rem;flex-wrap:wrap;align-items:baseline;">
+          <span>Total <strong style="color:var(--accent);font-size:.85rem;">${Math.round(s.total||0).toLocaleString('fr-FR')} €</strong></span>
+          <span style="color:var(--muted);">Travaux <strong style="color:var(--text);">${fmtM(trav)}</strong> <span style="font-size:.62rem;">(${ratioTrav})</span></span>
+          <span style="color:var(--muted);">Déco <strong style="color:var(--text);">${fmtM(deco)}</strong> <span style="font-size:.62rem;">(${ratioDeco})</span></span>
         </div>
-        <div style="font-size:.65rem;color:var(--muted);margin-top:2px;">Modifié le ${s.updatedAt||s.createdAt||'—'}${hyp}</div>
+        <div style="font-size:.63rem;color:var(--muted);margin-top:.25rem;">Modifié le ${s.updatedAt||s.createdAt||'—'}${hyp}</div>
       </div>
       <div style="display:flex;gap:4px;margin-left:.75rem;flex-shrink:0;" onclick="event.stopPropagation()">
         <button class="btn-ghost" style="font-size:.7rem;padding:3px 8px;" onclick="dupFromList('${s.id}')">Dupliquer</button>
