@@ -61,7 +61,7 @@ input[type=text]{padding:3px 6px;border:1px solid var(--border);border-radius:4p
 .pd{background:var(--surface2);border-radius:6px;padding:.55rem .75rem;margin-bottom:6px;}
 .pdh{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
 .dr{display:flex;align-items:center;justify-content:space-between;padding:2px 0;font-size:.7rem;}
-.dr span{color:var(--muted);}
+.dr span{color:var(--text);}
 .dv{font-family:var(--mono);font-size:.7rem;color:var(--text);}
 .btn-primary{background:var(--text);color:#fff;border:none;border-radius:6px;padding:.5rem 1.1rem;font-family:var(--sans);font-size:.8rem;font-weight:600;cursor:pointer;transition:opacity .15s;}
 .btn-primary:hover{opacity:.8;}
@@ -330,9 +330,9 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
         <button class="t" data-k="porte-entree" data-v="blindee" onclick="sT(this);calcFen()">Blindée (A2P)</button>
       </div></div></div>
     </div>
-    <div class="sp" id="price-porte-entree">—</div>
+    <div class="sp" id="price-fen-porte">—</div>
   </div>
-  <div class="step active">
+  <div class="step active" id="step-velux">
     <div class="snum">7</div>
     <div>
       <div class="slabel">Velux / fenêtres de toit</div>
@@ -347,58 +347,6 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
 <div class="subrow"><span>total fenêtres &amp; volets</span><span id="subtotal-fen">0 €</span></div>
 </div></div>
 
-<!-- MENUISERIES INTÉRIEURES -->
-<div class="card">
-<div class="card-header"><span class="card-title">Menuiseries intérieures</span><span class="card-total" id="total-menuint">0 €</span></div>
-<div class="card-body"><div class="steps">
-  <div class="step active">
-    <div class="snum">1</div>
-    <div>
-      <div class="slabel">Portes intérieures (fourniture + pose)</div>
-      <div class="sk"><input type="checkbox" id="skip-portes-int" onchange="calcMenuInt()"><label for="skip-portes-int">Pas nécessaire</label></div>
-      <div class="sc" id="portes-int-controls">
-        <div class="cr"><label>Nb de portes</label><input type="number" id="portes-int-nb" value="4" min="0" max="20" oninput="calcMenuInt()"></div>
-        <div class="cr"><label>Gamme</label><div class="tg">
-          <button class="t sel" data-k="porte-int-gamme" data-v="eco" onclick="sT(this);calcMenuInt()">Éco (150 €)</button>
-          <button class="t" data-k="porte-int-gamme" data-v="standard" onclick="sT(this);calcMenuInt()">Standard (280 €)</button>
-          <button class="t" data-k="porte-int-gamme" data-v="premium" onclick="sT(this);calcMenuInt()">Premium (450 €)</button>
-        </div></div>
-      </div>
-    </div>
-    <div class="sp" id="price-portes-int">—</div>
-  </div>
-  <div class="step active">
-    <div class="snum">2</div>
-    <div>
-      <div class="slabel">Dressing / placards intégrés</div>
-      <div class="sk"><input type="checkbox" id="skip-dressing" onchange="calcMenuInt()"><label for="skip-dressing">Pas nécessaire</label></div>
-      <div class="sc" id="dressing-controls">
-        <div class="cr"><label>Linéaire (ml)</label><input type="number" id="dressing-ml" value="2" min="0" max="20" oninput="calcMenuInt()"></div>
-        <div class="cr"><label>Type</label><div class="tg">
-          <button class="t sel" data-k="dressing-type" data-v="basique" onclick="sT(this);calcMenuInt()">Basique (200 €/ml)</button>
-          <button class="t" data-k="dressing-type" data-v="amenage" onclick="sT(this);calcMenuInt()">Aménagé (400 €/ml)</button>
-        </div></div>
-      </div>
-    </div>
-    <div class="sp" id="price-dressing">—</div>
-  </div>
-  <div class="step active">
-    <div class="snum">3</div>
-    <div>
-      <div class="slabel">Escalier (rénovation / remplacement)</div>
-      <div class="sk"><input type="checkbox" id="skip-escalier" onchange="calcMenuInt()"><label for="skip-escalier">Pas d'escalier</label></div>
-      <div class="sc" id="escalier-controls">
-        <div class="cr"><label>Type</label><div class="tg">
-          <button class="t sel" data-k="escalier-type" data-v="renovation" onclick="sT(this);calcMenuInt()">Rénovation (habillage)</button>
-          <button class="t" data-k="escalier-type" data-v="remplacement" onclick="sT(this);calcMenuInt()">Remplacement complet</button>
-        </div></div>
-      </div>
-    </div>
-    <div class="sp" id="price-escalier">—</div>
-  </div>
-</div>
-<div class="subrow"><span>total menuiseries intérieures</span><span id="subtotal-menuint">0 €</span></div>
-</div></div>
 
 <!-- ÉLECTRICITÉ -->
 <div class="card">
@@ -555,8 +503,23 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
     </div>
     <div class="sp" id="price-digicode">—</div>
   </div>
-  <div class="step" id="step-escalier">
+  <div class="step" id="step-dressing">
     <div class="snum">4</div>
+    <div>
+      <div class="slabel">Dressing / placards intégrés</div>
+      <div class="sk"><input type="checkbox" id="skip-dressing" onchange="calcMenuInt()"><label for="skip-dressing">Pas nécessaire</label></div>
+      <div class="sc" id="dressing-controls">
+        <div class="cr"><label>Linéaire (ml)</label><input type="number" id="dressing-ml" value="2" min="0" max="20" oninput="calcMenuInt()"></div>
+        <div class="cr"><label>Type</label><div class="tg">
+          <button class="t sel" data-k="dressing-type" data-v="basique" onclick="sT(this);calcMenuInt()">Basique (200 €/ml)</button>
+          <button class="t" data-k="dressing-type" data-v="amenage" onclick="sT(this);calcMenuInt()">Aménagé (400 €/ml)</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-dressing">—</div>
+  </div>
+  <div class="step" id="step-escalier">
+    <div class="snum">5</div>
     <div>
       <div class="slabel">Escalier (si maison avec étage)</div>
       <div class="sk"><input type="checkbox" id="skip-escalier" onchange="calcMenuInt()"><label for="skip-escalier">Pas d'escalier / à conserver</label></div>
@@ -944,7 +907,7 @@ const DEF_S = {
   'cable-passage':'goulotte','appareillage':'eco','vmc-type':'simple','interphone-type':'simple',
   'clim-config':'mono','clim-puissance':'2500',
   'plomb-etat':'partiel','chauffe-eau':'electrique',
-  'porte-entree':'aucune','porte-int-gamme':'standard','dressing-type':'basique','escalier-type':'renovation',
+  'porte-entree-type':'blindee','porte-int-gamme':'standard','dressing-type':'basique','escalier-type':'peinture','digicode-type':'connectee',
   'fauxplafond-type':'placo','faience-gamme':'eco','ravalement-type':'peinture','diagnostics-type':'base',
   'humidite-type':'leger','combles-type':'soufflage','radiateur-type':'inertie','portail':'non','eclairage-ext':'non','facade-type':'peinture','terrasse-type':'carrelage','porte-entree-type':'blindee','porte-int-gamme':'eco','digicode-type':'connectee','escalier-type':'peinture','facade-type':'peinture','terrasse-type':'carrelage','porte-entree-type':'blindee','porte-int-gamme':'eco','digicode-type':'connectee','escalier-type':'peinture',
   'sdb-surf':'petit','sdb-carrelage':'eco','sdb-douche':'bac','sdb-meuble':'simple','sdb-wc-presence':'oui','sdb-wc-type':'classique',
@@ -1030,10 +993,8 @@ function resetForm(surf,niveau,exploitation){
 
   // Checkboxes
   ['skip-enduit','skip-fen-reb','skip-credence'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
-  document.getElementById('skip-seche-serviettes').checked=false; // toujours prévoir
   document.getElementById('skip-radiateurs').checked=true;
-  document.getElementById('skip-facade').checked=true;
-  document.getElementById('skip-terrasse').checked=true;
+  document.getElementById('skip-ravalement').checked=true;
   document.getElementById('skip-escalier').checked=true;
   document.getElementById('skip-digicode').checked=niveau==='leger';
 
@@ -1181,7 +1142,7 @@ function calcFen(){
   setSkip('step-fen-reb',skipReb);
   // 6: porte d'entrée
   const pPorte={aucune:0,standard:1200,blindee:2800}[S['porte-entree']]||0;
-  setP('price-porte-entree',pPorte);
+  setP('price-fen-porte',pPorte);
   // 7: velux
   const pVelux=skipVelux?0:iv('velux-nb')*1800;
   setSkip('step-velux',skipVelux);
@@ -1207,18 +1168,7 @@ function calcElec(){
 }
 
 // ═══ MENUISERIES INTÉRIEURES ═══
-function calcMenuInt(){
-  const skipP=ck('skip-portes-int'),skipD=ck('skip-dressing'),skipE=ck('skip-escalier');
-  const prixPorte={eco:150,standard:280,premium:450}[S['porte-int-gamme']]||280;
-  const pp=skipP?0:iv('portes-int-nb')*prixPorte;
-  const prixDressing={basique:200,amenage:400}[S['dressing-type']]||200;
-  const pd=skipD?0:iv('dressing-ml')*prixDressing;
-  const pe=skipE?0:({renovation:2500,remplacement:6000}[S['escalier-type']]||2500);
-  setSkip('step-portes-int',skipP);setSkip('step-dressing',skipD);setSkip('step-escalier',skipE);
-  setP('price-portes-int',pp);setP('price-dressing',pd);setP('price-escalier',pe);
-  const t=pp+pd+pe;totals.menuint=t;
-  document.getElementById('subtotal-menuint').textContent=fmt(t);document.getElementById('total-menuint').textContent=fmt(t);updateGrand();
-}
+
 
 // ═══ PLOMBERIE ═══
 function calcPlomb(){
@@ -1243,23 +1193,37 @@ function calcClim(){
 
 // ═══ TRAVAUX SPÉCIAUX ═══
 function calcSpecial(){
-  const skipH=ck('skip-humidite'),skipC=ck('skip-combles'),skipSS=ck('skip-seche-serviettes'),skipR=ck('skip-radiateurs'),skipE=ck('skip-exterieur'),skipF=ck('skip-facade'),skipT=ck('skip-terrasse');
+  const skipH=ck('skip-humidite'),skipC=ck('skip-combles'),skipR=ck('skip-radiateurs'),skipE=ck('skip-exterieur');
+  const skipDem=ck('skip-demolition'),skipFP=ck('skip-fauxplafond'),skipFai=ck('skip-faience');
+  const skipRav=ck('skip-ravalement'),skipBenne=ck('skip-benne'),skipDiag=ck('skip-diagnostics');
+
   const surfH=iv('humidite-surf');
   const ph=(skipH||surfH===0)?0:surfH*(S['humidite-type']==='lourd'?180:60);
   const pc=skipC?0:iv('combles-surf')*(S['combles-type']==='amenageables'?90:28);
-  const pss=skipSS?0:iv('seche-serviettes-nb')*350;
-  const prixRad={inertie:280,soufflant:120}[S['radiateur-type']]||280;
+  const prixRad={inertie:280,soufflant:120,'seche-serviettes':350}[S['radiateur-type']]||280;
   const pr=skipR?0:iv('radiateurs-nb')*prixRad;
   const portailP={non:0,portillon:400,portail:2200}[S.portail]||0;
   const pe=skipE?0:portailP+iv('bals-nb')*80+(S['eclairage-ext']==='oui'?350:0);
-  const prixFacade={peinture:20,enduit:50,complet:80}[S['facade-type']]||20;
-  const pf=skipF?0:iv('facade-surf')*prixFacade;
-  const prixTerr={carrelage:55,beton:45,bois:80}[S['terrasse-type']]||55;
-  const pt=skipT?0:iv('terrasse-surf')*prixTerr;
-  setSkip('step-humidite',skipH);setSkip('step-combles',skipC);setSkip('step-seche-serviettes',skipSS);setSkip('step-radiateurs',skipR);setSkip('step-exterieur',skipE);setSkip('step-facade',skipF);setSkip('step-terrasse',skipT);
-  setP('price-humidite',ph);setP('price-combles',pc);setP('price-seche-serviettes',pss);setP('price-radiateurs',pr);setP('price-exterieur',pe);setP('price-facade',pf);setP('price-terrasse',pt);
-  const t=ph+pc+pss+pr+pe+pf+pt;totals.special=t;
-  document.getElementById('subtotal-special').textContent=fmt(t);document.getElementById('total-special').textContent=fmt(t);updateGrand();
+  const pDem=skipDem?0:(iv('demolition-ml')||0)*250;
+  const pFP=skipFP?0:(iv('fauxplafond-surf')||0)*({placo:35,dalles:25}[S['fauxplafond-type']]||35);
+  const pFai=skipFai?0:(iv('faience-surf')||0)*({eco:55,standard:80}[S['faience-gamme']]||55);
+  const pRav=skipRav?0:(iv('ravalement-surf')||0)*({peinture:25,enduit:55}[S['ravalement-type']]||25);
+  const pBenne=skipBenne?0:(iv('benne-nb')||0)*450;
+  const pDiag=skipDiag?0:({base:350,complet:650}[S['diagnostics-type']]||350);
+
+  setSkip('step-humidite',skipH);setSkip('step-combles',skipC);setSkip('step-radiateurs',skipR);setSkip('step-exterieur',skipE);
+  setSkip('step-demolition',skipDem);setSkip('step-fauxplafond',skipFP);setSkip('step-faience',skipFai);
+  setSkip('step-ravalement',skipRav);setSkip('step-benne',skipBenne);setSkip('step-diagnostics',skipDiag);
+
+  setP('price-humidite',ph);setP('price-combles',pc);setP('price-radiateurs',pr);setP('price-exterieur',pe);
+  setP('price-demolition',pDem);setP('price-fauxplafond',pFP);setP('price-faience',pFai);
+  setP('price-ravalement',pRav);setP('price-benne',pBenne);setP('price-diagnostics',pDiag);
+
+  const t=ph+pc+pr+pe+pDem+pFP+pFai+pRav+pBenne+pDiag;
+  totals.special=t;
+  document.getElementById('subtotal-special').textContent=fmt(t);
+  document.getElementById('total-special').textContent=fmt(t);
+  updateGrand();
 }
 
 // ═══ SALLE DE BAINS ═══
@@ -1345,19 +1309,23 @@ function renderDecoZones(){
   let grand=0;
   decoZones.forEach(z=>{
     const def=PIECE_TYPES[z.type];let totalUnit=0;
-    Object.entries(z.items).forEach(([k,v])=>{if(v.included)totalUnit+=v.prix||0;});
+    Object.entries(z.items).forEach(([k,v])=>{if(v.included)totalUnit+=(v.prix||0);});
     const qty=z.qty||1;
     const total=totalUnit*qty;
     grand+=total;
     const typeOpts=Object.entries(PIECE_TYPES).map(([k,v])=>`<button class="t${z.type===k?' sel':''}" onclick="setDecoType('${z.id}','${k}')">${v.label}</button>`).join('');
     const itemsHtml=Object.entries(def.items).map(([k,v])=>{
       const item=z.items[k]||{included:true,prix:v.prix,custom:v.custom||false};
-      if(item.custom)return`<div class="dr"><span style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="toggleDecoItem('${z.id}','${k}')"><span style="width:12px;height:12px;border-radius:3px;background:${item.included?'var(--accent)':'var(--border)'};display:inline-block;flex-shrink:0;"></span><span style="${item.included?'':'text-decoration:line-through;opacity:.4'}">${v.label}</span></span><input type="number" min="0" step="10" value="${item.prix||''}" placeholder="0 €" style="width:80px;font-size:.72rem;" oninput="setCustomDecoPrice('${z.id}','${k}',this.value)" onclick="event.stopPropagation()"></div>`;
-      return`<div class="dr" style="cursor:pointer;" onclick="toggleDecoItem('${z.id}','${k}')"><span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:${item.included?'var(--accent)':'var(--border)'};display:inline-block;flex-shrink:0;"></span><span style="${item.included?'':'text-decoration:line-through;opacity:.4'}">${v.label}</span></span><span class="dv">${fmt(v.prix)}</span></div>`;
+      const itemPrix=item.prix||0;
+      if(item.custom)return`<div class="dr"><span style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="toggleDecoItem('${z.id}','${k}')"><span style="width:12px;height:12px;border-radius:3px;background:${item.included?'var(--accent)':'var(--border)'};display:inline-block;flex-shrink:0;"></span><span style="${item.included?'':'text-decoration:line-through;opacity:.4'}">${v.label}</span></span><input type="number" min="0" step="10" value="${itemPrix||''}" placeholder="0 €" style="width:80px;font-size:.72rem;" oninput="setCustomDecoPrice('${z.id}','${k}',this.value)" onclick="event.stopPropagation()"></div>`;
+      return`<div class="dr" style="cursor:pointer;" onclick="toggleDecoItem('${z.id}','${k}')"><span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:${item.included?'var(--accent)':'var(--border)'};display:inline-block;flex-shrink:0;"></span><span style="${item.included?'':'text-decoration:line-through;opacity:.4'}">${v.label}</span></span><span class="dv">${fmt(itemPrix)}</span></div>`;
     }).join('');
     cont.innerHTML+=`<div class="pd"><div class="pdh"><input style="background:transparent;border:none;border-bottom:1px dashed var(--border);font-family:var(--sans);font-size:.75rem;font-weight:600;width:130px;color:var(--text);padding:1px 3px;" value="${z.name}" oninput="setDecoName('${z.id}',this.value)"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:.65rem;color:var(--muted);">×</span><input type="number" min="1" max="10" value="${qty}" style="width:38px;font-size:.75rem;text-align:center;" oninput="setDecoQty('${z.id}',+this.value)" title="Nombre de pièces identiques"><span style="font-family:var(--mono);font-size:.78rem;color:var(--accent);">${fmt(total)}</span><button class="rbtn" onclick="removeDecoZone('${z.id}')">✕</button></div></div><div class="cr" style="margin-bottom:8px;"><div class="tg">${typeOpts}</div></div>${itemsHtml}</div>`;
   });
-  totals.deco=grand;document.getElementById('subtotal-deco').textContent=fmt(grand);document.getElementById('total-deco').textContent=fmt(grand);updateGrand();
+  totals.deco=grand;
+  document.getElementById('subtotal-deco').textContent=fmt(grand);
+  document.getElementById('total-deco').textContent=fmt(grand);
+  updateGrand();
 }
 
 // ═══ LIGNES LIBRES ═══
@@ -1510,23 +1478,35 @@ function calcSDB(){renderSDBZones();}
 
 // ═══ MENUISERIES INTÉRIEURES ═══
 function calcMenuInt(){
-  const skipPE=ck('skip-porte-entree'),skipPI=ck('skip-portes-int'),skipDG=ck('skip-digicode'),skipES=ck('skip-escalier');
-  const pPE=skipPE?0:iv('porte-entree-nb')*(S['porte-entree-type']==='blindee'?1800:900);
-  const pxPI={eco:220,standard:320}[S['porte-int-gamme']]||220;
-  const pPI=skipPI?0:iv('portes-int-nb')*pxPI;
-  const pxDG={connectee:350,digicode:180}[S['digicode-type']]||350;
-  const pDG=skipDG?0:iv('digicode-nb')*pxDG;
-  const pxES={peinture:600,marches:1800,complet:4500}[S['escalier-type']]||600;
-  const pES=skipES?0:pxES;
-  setSkip('step-porte-entree',skipPE);setSkip('step-portes-int',skipPI);setSkip('step-digicode',skipDG);setSkip('step-escalier',skipES);
-  setP('price-porte-entree',pPE);setP('price-portes-int',pPI);setP('price-digicode',pDG);setP('price-escalier',pES);
-  const t=pPE+pPI+pDG+pES;totals.menuint=t;
-  document.getElementById('subtotal-menuint').textContent=fmt(t);document.getElementById('total-menuint').textContent=fmt(t);updateGrand();
+  const skipPE=ck('skip-porte-entree'),skipP=ck('skip-portes-int');
+  const skipDig=ck('skip-digicode'),skipE=ck('skip-escalier');
+  // Porte d'entrée
+  const prixPE={blindee:2800,standard:1200}[S['porte-entree-type']]||2800;
+  const pPE=skipPE?0:iv('porte-entree-nb')*prixPE;
+  // Portes intérieures
+  const prixPorte={eco:150,standard:280}[S['porte-int-gamme']]||280;
+  const pp=skipP?0:iv('portes-int-nb')*prixPorte;
+  // Digicode / serrure connectée
+  const prixDig={connectee:350,digicode:180}[S['digicode-type']]||350;
+  const pDig=skipDig?0:iv('digicode-nb')*prixDig;
+  // Escalier
+  const prixEsc={peinture:800,marches:3500,complet:8000}[S['escalier-type']]||800;
+  const pEsc=skipE?0:prixEsc;
+  const skipDr=ck('skip-dressing');
+  const prixDressing={basique:200,amenage:400}[S['dressing-type']]||200;
+  const pDr=skipDr?0:iv('dressing-ml')*prixDressing;
+  setSkip('step-porte-entree',skipPE);setSkip('step-portes-int',skipP);
+  setSkip('step-dressing',skipDr);setSkip('step-digicode',skipDig);setSkip('step-escalier',skipE);
+  setP('price-porte-entree',pPE);setP('price-portes-int',pp);
+  setP('price-dressing',pDr);setP('price-digicode',pDig);setP('price-escalier',pEsc);
+  const t=pPE+pp+pDr+pDig+pEsc;totals.menuint=t;
+  document.getElementById('subtotal-menuint').textContent=fmt(t);
+  document.getElementById('total-menuint').textContent=fmt(t);updateGrand();
 }
 
 function calcAll(){
   _batchCalc=true;
-  calcSolTotal();calcPeinture();calcFen();calcElec();calcPlomb();renderCloisonZones();calcMenuInt();calcClim();calcSpecial();renderSDBZones();calcCuisine();renderDecoZones();
+  calcSolTotal();calcPeinture();calcFen();calcMenuInt();calcElec();calcPlomb();renderCloisonZones();calcClim();calcSpecial();renderSDBZones();calcCuisine();renderDecoZones();
   _batchCalc=false;
   updateGrand();
 }
@@ -1572,8 +1552,8 @@ function saveSims(s){localStorage.setItem('simulations',JSON.stringify(s));}
 
 function collectState(){
   const inputs={};
-  ['wiz-surf','form-surf','sim-hypothesis','peinture-surf','peinture-pieces','fen-petit','fen-standard','fen-baie','elec-surf','elec-pieces','vmc-nb','interphone-nb','chauffe-eau-nb','clim-nb','sdb-nb','cuisine-nb','cuisine-lin','plomb-surf','humidite-surf','combles-surf','seche-serviettes-nb','radiateurs-nb','bals-nb','cloison-ml','cloison-hsp','porte-entree-nb','portes-int-nb','digicode-nb','facade-surf','terrasse-surf'].forEach(id=>{inputs[id]=document.getElementById(id)?.value;});
-  ['skip-enduit','skip-fen-reb','skip-volet-depose','skip-vmc','skip-credence','skip-humidite','skip-combles','skip-seche-serviettes','skip-radiateurs','skip-exterieur','skip-facade','skip-terrasse','skip-porte-entree','skip-portes-int','skip-digicode','skip-escalier','skip-interphone','skip-chauffe-eau','skip-cuisine'].forEach(id=>{inputs[id]=document.getElementById(id)?.checked;});
+  ['wiz-surf','form-surf','sim-hypothesis','peinture-surf','peinture-pieces','fen-petit','fen-standard','fen-baie','velux-nb','elec-surf','elec-pieces','vmc-nb','interphone-nb','chauffe-eau-nb','clim-nb','cuisine-nb','cuisine-lin','plomb-surf','humidite-surf','combles-surf','radiateurs-nb','bals-nb','porte-entree-nb','portes-int-nb','dressing-ml','digicode-nb','demolition-ml','fauxplafond-surf','faience-surf','ravalement-surf','benne-nb','cloison-ml','cloison-hsp'].forEach(id=>{inputs[id]=document.getElementById(id)?.value;});
+  ['skip-enduit','skip-fen-reb','skip-volet-depose','skip-velux','skip-vmc','skip-credence','skip-humidite','skip-combles','skip-radiateurs','skip-exterieur','skip-interphone','skip-chauffe-eau','skip-cuisine','skip-porte-entree','skip-portes-int','skip-dressing','skip-digicode','skip-escalier','skip-demolition','skip-fauxplafond','skip-faience','skip-ravalement','skip-benne','skip-diagnostics'].forEach(id=>{inputs[id]=document.getElementById(id)?.checked;});
   inputs['sim-notes']=document.getElementById('sim-notes')?.value;
   inputs['sim-hypothesis']=document.getElementById('sim-hypothesis')?.value;
   return{S:{...S},solZones:JSON.parse(JSON.stringify(solZones)),sdbZones:JSON.parse(JSON.stringify(sdbZones)),cloisonZones:JSON.parse(JSON.stringify(cloisonZones)),decoZones:JSON.parse(JSON.stringify(decoZones)),lignesLibres:JSON.parse(JSON.stringify(lignesLibres)),inputs,totals:{...totals}};
