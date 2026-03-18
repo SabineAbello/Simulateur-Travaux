@@ -320,7 +320,84 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
     <div class="sp" id="price-fen-4">—</div>
   </div>
 </div>
+  <div class="step active">
+    <div class="snum">6</div>
+    <div>
+      <div class="slabel">Porte d'entrée</div>
+      <div class="sc"><div class="cr"><label>Type</label><div class="tg">
+        <button class="t sel" data-k="porte-entree" data-v="aucune" onclick="sT(this);calcFen()">Aucune</button>
+        <button class="t" data-k="porte-entree" data-v="standard" onclick="sT(this);calcFen()">Standard (bois/alu)</button>
+        <button class="t" data-k="porte-entree" data-v="blindee" onclick="sT(this);calcFen()">Blindée (A2P)</button>
+      </div></div></div>
+    </div>
+    <div class="sp" id="price-porte-entree">—</div>
+  </div>
+  <div class="step active">
+    <div class="snum">7</div>
+    <div>
+      <div class="slabel">Velux / fenêtres de toit</div>
+      <div class="sk"><input type="checkbox" id="skip-velux" onchange="calcFen()"><label for="skip-velux">Pas de velux</label></div>
+      <div class="sc" id="velux-controls">
+        <div class="cr"><label>Nombre</label><input type="number" id="velux-nb" value="1" min="1" max="10" oninput="calcFen()"></div>
+      </div>
+    </div>
+    <div class="sp" id="price-velux">—</div>
+  </div>
+</div>
 <div class="subrow"><span>total fenêtres &amp; volets</span><span id="subtotal-fen">0 €</span></div>
+</div></div>
+
+<!-- MENUISERIES INTÉRIEURES -->
+<div class="card">
+<div class="card-header"><span class="card-title">Menuiseries intérieures</span><span class="card-total" id="total-menuint">0 €</span></div>
+<div class="card-body"><div class="steps">
+  <div class="step active">
+    <div class="snum">1</div>
+    <div>
+      <div class="slabel">Portes intérieures (fourniture + pose)</div>
+      <div class="sk"><input type="checkbox" id="skip-portes-int" onchange="calcMenuInt()"><label for="skip-portes-int">Pas nécessaire</label></div>
+      <div class="sc" id="portes-int-controls">
+        <div class="cr"><label>Nb de portes</label><input type="number" id="portes-int-nb" value="4" min="0" max="20" oninput="calcMenuInt()"></div>
+        <div class="cr"><label>Gamme</label><div class="tg">
+          <button class="t sel" data-k="porte-int-gamme" data-v="eco" onclick="sT(this);calcMenuInt()">Éco (150 €)</button>
+          <button class="t" data-k="porte-int-gamme" data-v="standard" onclick="sT(this);calcMenuInt()">Standard (280 €)</button>
+          <button class="t" data-k="porte-int-gamme" data-v="premium" onclick="sT(this);calcMenuInt()">Premium (450 €)</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-portes-int">—</div>
+  </div>
+  <div class="step active">
+    <div class="snum">2</div>
+    <div>
+      <div class="slabel">Dressing / placards intégrés</div>
+      <div class="sk"><input type="checkbox" id="skip-dressing" onchange="calcMenuInt()"><label for="skip-dressing">Pas nécessaire</label></div>
+      <div class="sc" id="dressing-controls">
+        <div class="cr"><label>Linéaire (ml)</label><input type="number" id="dressing-ml" value="2" min="0" max="20" oninput="calcMenuInt()"></div>
+        <div class="cr"><label>Type</label><div class="tg">
+          <button class="t sel" data-k="dressing-type" data-v="basique" onclick="sT(this);calcMenuInt()">Basique (200 €/ml)</button>
+          <button class="t" data-k="dressing-type" data-v="amenage" onclick="sT(this);calcMenuInt()">Aménagé (400 €/ml)</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-dressing">—</div>
+  </div>
+  <div class="step active">
+    <div class="snum">3</div>
+    <div>
+      <div class="slabel">Escalier (rénovation / remplacement)</div>
+      <div class="sk"><input type="checkbox" id="skip-escalier" onchange="calcMenuInt()"><label for="skip-escalier">Pas d'escalier</label></div>
+      <div class="sc" id="escalier-controls">
+        <div class="cr"><label>Type</label><div class="tg">
+          <button class="t sel" data-k="escalier-type" data-v="renovation" onclick="sT(this);calcMenuInt()">Rénovation (habillage)</button>
+          <button class="t" data-k="escalier-type" data-v="remplacement" onclick="sT(this);calcMenuInt()">Remplacement complet</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-escalier">—</div>
+  </div>
+</div>
+<div class="subrow"><span>total menuiseries intérieures</span><span id="subtotal-menuint">0 €</span></div>
 </div></div>
 
 <!-- ÉLECTRICITÉ -->
@@ -429,6 +506,74 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
   <div class="subrow"><span>total cloisons</span><span id="subtotal-cloison">0 €</span></div>
 </div></div>
 
+<!-- MENUISERIES INTÉRIEURES -->
+<div class="card">
+<div class="card-header"><span class="card-title">Menuiseries intérieures</span><span class="card-total" id="total-menuint">0 €</span></div>
+<div class="card-body"><div class="steps">
+  <div class="step" id="step-porte-entree">
+    <div class="snum">1</div>
+    <div>
+      <div class="slabel">Porte d'entrée</div>
+      <div class="sk"><input type="checkbox" id="skip-porte-entree" onchange="calcMenuInt()"><label for="skip-porte-entree">À conserver</label></div>
+      <div class="sc" id="porte-entree-controls">
+        <div class="cr"><label>Type</label><div class="tg">
+          <button class="t sel" data-k="porte-entree-type" data-v="blindee" onclick="sT(this);calcMenuInt()">Blindée (recommandé)</button>
+          <button class="t" data-k="porte-entree-type" data-v="standard" onclick="sT(this);calcMenuInt()">Standard</button>
+        </div></div>
+        <div class="cr"><label>Nb de portes</label><input type="number" id="porte-entree-nb" value="1" min="1" max="4" oninput="calcMenuInt()"></div>
+      </div>
+    </div>
+    <div class="sp" id="price-porte-entree">—</div>
+  </div>
+  <div class="step" id="step-portes-int">
+    <div class="snum">2</div>
+    <div>
+      <div class="slabel">Portes intérieures (dépose + pose)</div>
+      <div class="sk"><input type="checkbox" id="skip-portes-int" onchange="calcMenuInt()"><label for="skip-portes-int">À conserver</label></div>
+      <div class="sc" id="portes-int-controls">
+        <div class="cr"><label>Nb de portes</label><input type="number" id="portes-int-nb" value="5" min="0" max="20" oninput="calcMenuInt()"></div>
+        <div class="cr"><label>Gamme</label><div class="tg">
+          <button class="t sel" data-k="porte-int-gamme" data-v="eco" onclick="sT(this);calcMenuInt()">Économique</button>
+          <button class="t" data-k="porte-int-gamme" data-v="standard" onclick="sT(this);calcMenuInt()">Standard</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-portes-int">—</div>
+  </div>
+  <div class="step" id="step-digicode">
+    <div class="snum">3</div>
+    <div>
+      <div class="slabel">Digicode / serrure connectée</div>
+      <div class="sk"><input type="checkbox" id="skip-digicode" onchange="calcMenuInt()"><label for="skip-digicode">Pas nécessaire</label></div>
+      <div class="sc" id="digicode-controls">
+        <div class="cr"><label>Nb de points</label><input type="number" id="digicode-nb" value="1" min="1" max="6" oninput="calcMenuInt()"></div>
+        <div class="cr"><label>Type</label><div class="tg">
+          <button class="t sel" data-k="digicode-type" data-v="connectee" onclick="sT(this);calcMenuInt()">Connectée (Airbnb/coloc)</button>
+          <button class="t" data-k="digicode-type" data-v="digicode" onclick="sT(this);calcMenuInt()">Digicode simple</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-digicode">—</div>
+  </div>
+  <div class="step" id="step-escalier">
+    <div class="snum">4</div>
+    <div>
+      <div class="slabel">Escalier (si maison avec étage)</div>
+      <div class="sk"><input type="checkbox" id="skip-escalier" onchange="calcMenuInt()"><label for="skip-escalier">Pas d'escalier / à conserver</label></div>
+      <div class="sc" id="escalier-controls">
+        <div class="cr"><label>Traitement</label><div class="tg">
+          <button class="t sel" data-k="escalier-type" data-v="peinture" onclick="sT(this);calcMenuInt()">Peinture + vernis</button>
+          <button class="t" data-k="escalier-type" data-v="marches" onclick="sT(this);calcMenuInt()">Remplacement marches</button>
+          <button class="t" data-k="escalier-type" data-v="complet" onclick="sT(this);calcMenuInt()">Escalier complet</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-escalier">—</div>
+  </div>
+</div>
+<div class="subrow"><span>total menuiseries intérieures</span><span id="subtotal-menuint">0 €</span></div>
+</div></div>
+
 <!-- CLIMATISATION -->
 <div class="card">
 <div class="card-header"><span class="card-title">Climatisation réversible</span><span class="card-total" id="total-clim">0 €</span></div>
@@ -491,8 +636,34 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
     </div>
     <div class="sp" id="price-combles">—</div>
   </div>
-  <div class="step" id="step-exterieur">
+  <div class="step" id="step-seche-serviettes">
     <div class="snum">3</div>
+    <div>
+      <div class="slabel">Sèche-serviettes (salles de bains)</div>
+      <div class="sk"><input type="checkbox" id="skip-seche-serviettes" onchange="calcSpecial()"><label for="skip-seche-serviettes">Pas nécessaire</label></div>
+      <div class="sc" id="seche-serviettes-controls">
+        <div class="cr"><label>Nb de sèche-serviettes</label><input type="number" id="seche-serviettes-nb" value="1" min="1" max="6" oninput="calcSpecial()"><span style="font-size:.65rem;color:var(--muted)">× 350 € posé</span></div>
+      </div>
+    </div>
+    <div class="sp" id="price-seche-serviettes">—</div>
+  </div>
+  <div class="step" id="step-radiateurs">
+    <div class="snum">4</div>
+    <div>
+      <div class="slabel">Radiateurs électriques (si pas de clim)</div>
+      <div class="sk"><input type="checkbox" id="skip-radiateurs" onchange="calcSpecial()"><label for="skip-radiateurs">Pas nécessaire (clim réversible suffit)</label></div>
+      <div class="sc" id="radiateurs-controls">
+        <div class="cr"><label>Nb de radiateurs</label><input type="number" id="radiateurs-nb" value="3" min="1" max="15" oninput="calcSpecial()"></div>
+        <div class="cr"><label>Type</label><div class="tg">
+          <button class="t sel" data-k="radiateur-type" data-v="inertie" onclick="sT(this);calcSpecial()">Inertie (recommandé)</button>
+          <button class="t" data-k="radiateur-type" data-v="soufflant" onclick="sT(this);calcSpecial()">Soufflant (éco)</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-radiateurs">—</div>
+  </div>
+  <div class="step" id="step-exterieur">
+    <div class="snum">5</div>
     <div>
       <div class="slabel">Extérieur (portail, boîtes aux lettres, éclairage)</div>
       <div class="sk"><input type="checkbox" id="skip-exterieur" onchange="calcSpecial()"><label for="skip-exterieur">Pas nécessaire</label></div>
@@ -510,6 +681,87 @@ textarea:focus{outline:2px solid var(--accent);border-color:transparent;}
       </div>
     </div>
     <div class="sp" id="price-exterieur">—</div>
+  </div>
+  <div class="step" id="step-demolition">
+    <div class="snum">5</div>
+    <div>
+      <div class="slabel">Démolition cloisons existantes</div>
+      <div class="sk"><input type="checkbox" id="skip-demolition" onchange="calcSpecial()"><label for="skip-demolition">Pas nécessaire</label></div>
+      <div class="sc" id="demolition-controls">
+        <div class="cr"><label>Linéaire à abattre (ml)</label><input type="number" id="demolition-ml" value="0" min="0" oninput="calcSpecial()"></div>
+      </div>
+    </div>
+    <div class="sp" id="price-demolition">—</div>
+  </div>
+  <div class="step" id="step-fauxplafond">
+    <div class="snum">6</div>
+    <div>
+      <div class="slabel">Faux plafond</div>
+      <div class="sk"><input type="checkbox" id="skip-fauxplafond" onchange="calcSpecial()"><label for="skip-fauxplafond">Pas nécessaire</label></div>
+      <div class="sc" id="fauxplafond-controls">
+        <div class="cr"><label>Surface (m²)</label><input type="number" id="fauxplafond-surf" value="20" min="1" oninput="calcSpecial()"></div>
+        <div class="cr"><label>Type</label><div class="tg">
+          <button class="t sel" data-k="fauxplafond-type" data-v="placo" onclick="sT(this);calcSpecial()">Placo (35 €/m²)</button>
+          <button class="t" data-k="fauxplafond-type" data-v="dalles" onclick="sT(this);calcSpecial()">Dalles (25 €/m²)</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-fauxplafond">—</div>
+  </div>
+  <div class="step" id="step-faience">
+    <div class="snum">7</div>
+    <div>
+      <div class="slabel">Faïence murale hors SDB (cuisine, couloir…)</div>
+      <div class="sk"><input type="checkbox" id="skip-faience" onchange="calcSpecial()"><label for="skip-faience">Pas nécessaire</label></div>
+      <div class="sc" id="faience-controls">
+        <div class="cr"><label>Surface (m²)</label><input type="number" id="faience-surf" value="5" min="1" oninput="calcSpecial()"></div>
+        <div class="cr"><label>Gamme</label><div class="tg">
+          <button class="t sel" data-k="faience-gamme" data-v="eco" onclick="sT(this);calcSpecial()">Éco (55 €/m²)</button>
+          <button class="t" data-k="faience-gamme" data-v="standard" onclick="sT(this);calcSpecial()">Standard (80 €/m²)</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-faience">—</div>
+  </div>
+  <div class="step" id="step-ravalement">
+    <div class="snum">8</div>
+    <div>
+      <div class="slabel">Ravalement façade / enduit extérieur</div>
+      <div class="sk"><input type="checkbox" id="skip-ravalement" onchange="calcSpecial()"><label for="skip-ravalement">Pas nécessaire</label></div>
+      <div class="sc" id="ravalement-controls">
+        <div class="cr"><label>Surface façade (m²)</label><input type="number" id="ravalement-surf" value="80" min="1" oninput="calcSpecial()"></div>
+        <div class="cr"><label>Type</label><div class="tg">
+          <button class="t sel" data-k="ravalement-type" data-v="peinture" onclick="sT(this);calcSpecial()">Peinture (25 €/m²)</button>
+          <button class="t" data-k="ravalement-type" data-v="enduit" onclick="sT(this);calcSpecial()">Enduit projeté (55 €/m²)</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-ravalement">—</div>
+  </div>
+  <div class="step" id="step-benne">
+    <div class="snum">9</div>
+    <div>
+      <div class="slabel">Benne à gravats / évacuation déchets</div>
+      <div class="sk"><input type="checkbox" id="skip-benne" onchange="calcSpecial()"><label for="skip-benne">Pas nécessaire</label></div>
+      <div class="sc" id="benne-controls">
+        <div class="cr"><label>Nb de bennes</label><input type="number" id="benne-nb" value="1" min="1" max="10" oninput="calcSpecial()"></div>
+      </div>
+    </div>
+    <div class="sp" id="price-benne">—</div>
+  </div>
+  <div class="step" id="step-diagnostics">
+    <div class="snum">10</div>
+    <div>
+      <div class="slabel">Diagnostics obligatoires (DPE, amiante, plomb…)</div>
+      <div class="sk"><input type="checkbox" id="skip-diagnostics" onchange="calcSpecial()"><label for="skip-diagnostics">Déjà réalisés</label></div>
+      <div class="sc" id="diagnostics-controls">
+        <div class="cr"><label>Pack</label><div class="tg">
+          <button class="t sel" data-k="diagnostics-type" data-v="base" onclick="sT(this);calcSpecial()">Base (DPE + électricité)</button>
+          <button class="t" data-k="diagnostics-type" data-v="complet" onclick="sT(this);calcSpecial()">Complet (tous diags)</button>
+        </div></div>
+      </div>
+    </div>
+    <div class="sp" id="price-diagnostics">—</div>
   </div>
 </div>
 <div class="subrow"><span>total travaux spéciaux</span><span id="subtotal-special">0 €</span></div>
@@ -692,7 +944,9 @@ const DEF_S = {
   'cable-passage':'goulotte','appareillage':'eco','vmc-type':'simple','interphone-type':'simple',
   'clim-config':'mono','clim-puissance':'2500',
   'plomb-etat':'partiel','chauffe-eau':'electrique',
-  'humidite-type':'leger','combles-type':'soufflage','portail':'non','eclairage-ext':'non',
+  'porte-entree':'aucune','porte-int-gamme':'standard','dressing-type':'basique','escalier-type':'renovation',
+  'fauxplafond-type':'placo','faience-gamme':'eco','ravalement-type':'peinture','diagnostics-type':'base',
+  'humidite-type':'leger','combles-type':'soufflage','radiateur-type':'inertie','portail':'non','eclairage-ext':'non','facade-type':'peinture','terrasse-type':'carrelage','porte-entree-type':'blindee','porte-int-gamme':'eco','digicode-type':'connectee','escalier-type':'peinture','facade-type':'peinture','terrasse-type':'carrelage','porte-entree-type':'blindee','porte-int-gamme':'eco','digicode-type':'connectee','escalier-type':'peinture',
   'sdb-surf':'petit','sdb-carrelage':'eco','sdb-douche':'bac','sdb-meuble':'simple','sdb-wc-presence':'oui','sdb-wc-type':'classique',
   'cuisine-gamme':'eco','pdtrav':'stratifie','credence-type':'carrelage',
   'electro-plaque':'non','electro-four':'non','electro-hotte':'non','electro-frigo':'non','electro-lv':'non','electro-mo':'non','electro-ll':'non',
@@ -716,7 +970,7 @@ function setSkip(id,skip){const el=document.getElementById(id);if(el)el.classLis
 function iv(id){return +document.getElementById(id)?.value||0;}
 function ck(id){return document.getElementById(id)?.checked||false;}
 
-let totals={sol:0,peinture:0,fen:0,elec:0,plomb:0,clim:0,cloison:0,special:0,sdb:0,cuisine:0,deco:0,libretrav:0,libredeco:0};
+let totals={sol:0,peinture:0,fen:0,elec:0,plomb:0,clim:0,cloison:0,menuint:0,special:0,sdb:0,cuisine:0,deco:0,libretrav:0,libredeco:0};
 
 // ═══ WIZARD ═══
 let wizState={niveau:'lourd',exploitation:'lld'};
@@ -760,10 +1014,28 @@ function resetForm(surf,niveau,exploitation){
   setV('cuisine-nb',1); setV('cuisine-lin',2); setV('interphone-nb',1);
   setV('chauffe-eau-nb',1);
   setV('humidite-surf',Math.round(surf*0.2)); setV('combles-surf',Math.round(surf*0.4));
+  setV('seche-serviettes-nb',Math.max(1,Math.round(surf/45)||1));
+  setV('radiateurs-nb',Math.round(surf/20)||3);
+  setV('porte-entree-nb',1);
+  setV('portes-int-nb',Math.round(surf/18)||4);
+  setV('digicode-nb',1);
+  setV('facade-surf',Math.round(surf*0.6));
+  setV('terrasse-surf',20);
+  setV('porte-entree-nb',1);
+  setV('portes-int-nb',Math.round(surf/18)||4);
+  setV('digicode-nb',1);
+  setV('facade-surf',Math.round(surf*0.6));
+  setV('terrasse-surf',20);
   setV('bals-nb',2);
 
   // Checkboxes
   ['skip-enduit','skip-fen-reb','skip-credence'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
+  document.getElementById('skip-seche-serviettes').checked=false; // toujours prévoir
+  document.getElementById('skip-radiateurs').checked=true;
+  document.getElementById('skip-facade').checked=true;
+  document.getElementById('skip-terrasse').checked=true;
+  document.getElementById('skip-escalier').checked=true;
+  document.getElementById('skip-digicode').checked=niveau==='leger';
 
   // Niveau de travaux
   const lourd = niveau==='lourd'||niveau==='treslourd';
@@ -892,22 +1164,30 @@ function calcFen(){
   const tot=nb.p+nb.s+nb.b;
   const skipReb=ck('skip-fen-reb');
   const skipVoletDepose=ck('skip-volet-depose');
-  // Etape 1 : dépose menuiseries uniquement (sans volets)
+  const skipVelux=ck('skip-velux');
+  // 1: dépose menuiseries
   const p1=tot===0?0:tot*100;
-  // Etape 2 : fourniture + pose fenêtres neuves
+  // 2: fourniture + pose fenêtres neuves
   const matPrix={pvc:{p:620,s:980,b:1500},alu:{p:900,s:1300,b:2200},bois:{p:1100,s:1500,b:2500}}[S['fen-materiau']]||{p:620,s:980,b:1500};
   const p2=tot===0?0:nb.p*matPrix.p+nb.s*matPrix.s+nb.b*matPrix.b;
-  // Etape 3 : dépose volets existants (séparée)
+  // 3: dépose volets
   const depose_volet={bois:80,roulant:150}[S['volet-existant']]||80;
   const pVoletDepose=skipVoletDepose?0:tot*depose_volet;
   setSkip('step-fen-volet-depose',skipVoletDepose);
-  // Etape 4 : volets neufs
+  // 4: volets neufs
   const pVoletNeuf=tot*({aucun:0,bois:320,alu:400,'roulant-elec':580}[S['volet-neuf']]||0);
-  // Etape 5 : rebouchage
+  // 5: rebouchage
   const pReb=skipReb?0:tot*80;
   setSkip('step-fen-reb',skipReb);
-  setP('price-fen-1',p1);setP('price-fen-2',p2);setP('price-fen-volet-depose',pVoletDepose);setP('price-fen-3',pVoletNeuf);setP('price-fen-4',pReb);
-  const t=p1+p2+pVoletDepose+pVoletNeuf+pReb;totals.fen=t;
+  // 6: porte d'entrée
+  const pPorte={aucune:0,standard:1200,blindee:2800}[S['porte-entree']]||0;
+  setP('price-porte-entree',pPorte);
+  // 7: velux
+  const pVelux=skipVelux?0:iv('velux-nb')*1800;
+  setSkip('step-velux',skipVelux);
+  setP('price-fen-1',p1);setP('price-fen-2',p2);setP('price-fen-volet-depose',pVoletDepose);
+  setP('price-fen-3',pVoletNeuf);setP('price-fen-4',pReb);setP('price-velux',pVelux);
+  const t=p1+p2+pVoletDepose+pVoletNeuf+pReb+pPorte+pVelux;totals.fen=t;
   document.getElementById('subtotal-fen').textContent=fmt(t);document.getElementById('total-fen').textContent=fmt(t);updateGrand();
 }
 
@@ -924,6 +1204,20 @@ function calcElec(){
   setP('price-elec-1',p1);setP('price-elec-2',p2);setP('price-elec-3',p3);
   const t=p1+p2+p3;totals.elec=t;
   document.getElementById('subtotal-elec').textContent=fmt(t);document.getElementById('total-elec').textContent=fmt(t);updateGrand();
+}
+
+// ═══ MENUISERIES INTÉRIEURES ═══
+function calcMenuInt(){
+  const skipP=ck('skip-portes-int'),skipD=ck('skip-dressing'),skipE=ck('skip-escalier');
+  const prixPorte={eco:150,standard:280,premium:450}[S['porte-int-gamme']]||280;
+  const pp=skipP?0:iv('portes-int-nb')*prixPorte;
+  const prixDressing={basique:200,amenage:400}[S['dressing-type']]||200;
+  const pd=skipD?0:iv('dressing-ml')*prixDressing;
+  const pe=skipE?0:({renovation:2500,remplacement:6000}[S['escalier-type']]||2500);
+  setSkip('step-portes-int',skipP);setSkip('step-dressing',skipD);setSkip('step-escalier',skipE);
+  setP('price-portes-int',pp);setP('price-dressing',pd);setP('price-escalier',pe);
+  const t=pp+pd+pe;totals.menuint=t;
+  document.getElementById('subtotal-menuint').textContent=fmt(t);document.getElementById('total-menuint').textContent=fmt(t);updateGrand();
 }
 
 // ═══ PLOMBERIE ═══
@@ -949,15 +1243,22 @@ function calcClim(){
 
 // ═══ TRAVAUX SPÉCIAUX ═══
 function calcSpecial(){
-  const skipH=ck('skip-humidite'),skipC=ck('skip-combles'),skipE=ck('skip-exterieur');
+  const skipH=ck('skip-humidite'),skipC=ck('skip-combles'),skipSS=ck('skip-seche-serviettes'),skipR=ck('skip-radiateurs'),skipE=ck('skip-exterieur'),skipF=ck('skip-facade'),skipT=ck('skip-terrasse');
   const surfH=iv('humidite-surf');
   const ph=(skipH||surfH===0)?0:surfH*(S['humidite-type']==='lourd'?180:60);
   const pc=skipC?0:iv('combles-surf')*(S['combles-type']==='amenageables'?90:28);
+  const pss=skipSS?0:iv('seche-serviettes-nb')*350;
+  const prixRad={inertie:280,soufflant:120}[S['radiateur-type']]||280;
+  const pr=skipR?0:iv('radiateurs-nb')*prixRad;
   const portailP={non:0,portillon:400,portail:2200}[S.portail]||0;
   const pe=skipE?0:portailP+iv('bals-nb')*80+(S['eclairage-ext']==='oui'?350:0);
-  setSkip('step-humidite',skipH);setSkip('step-combles',skipC);setSkip('step-exterieur',skipE);
-  setP('price-humidite',ph);setP('price-combles',pc);setP('price-exterieur',pe);
-  const t=ph+pc+pe;totals.special=t;
+  const prixFacade={peinture:20,enduit:50,complet:80}[S['facade-type']]||20;
+  const pf=skipF?0:iv('facade-surf')*prixFacade;
+  const prixTerr={carrelage:55,beton:45,bois:80}[S['terrasse-type']]||55;
+  const pt=skipT?0:iv('terrasse-surf')*prixTerr;
+  setSkip('step-humidite',skipH);setSkip('step-combles',skipC);setSkip('step-seche-serviettes',skipSS);setSkip('step-radiateurs',skipR);setSkip('step-exterieur',skipE);setSkip('step-facade',skipF);setSkip('step-terrasse',skipT);
+  setP('price-humidite',ph);setP('price-combles',pc);setP('price-seche-serviettes',pss);setP('price-radiateurs',pr);setP('price-exterieur',pe);setP('price-facade',pf);setP('price-terrasse',pt);
+  const t=ph+pc+pss+pr+pe+pf+pt;totals.special=t;
   document.getElementById('subtotal-special').textContent=fmt(t);document.getElementById('total-special').textContent=fmt(t);updateGrand();
 }
 
@@ -1009,13 +1310,14 @@ function calcCuisine(){
 
 // ═══ AMEUBLEMENT / DÉCO ═══
 const PIECE_TYPES={
-  chambre:{label:'Chambre',items:{lit:{label:'Lit + sommier + matelas',prix:500},chevet:{label:'Table(s) de chevet',prix:80},armoire:{label:'Armoire / penderie',prix:250},rideau:{label:'Rideaux + tringle',prix:80},luminaire:{label:'Luminaire',prix:40},linge:{label:'Linge de lit (couette + oreillers + draps ×2)',prix:80},deco_murale:{label:'Décoration murale',prix:60}}},
-  salon:{label:'Salon / séjour',items:{canape:{label:'Canapé',prix:500},table:{label:'Table basse + meuble TV',prix:200},rangement:{label:'Meuble rangement',prix:180},table_manger:{label:'Table à manger',prix:220,qtyitem:true,qtydefault:1},chaises:{label:'Chaises',prix:120,qtyitem:true,qtydefault:4},rideau:{label:'Rideaux + tringle',prix:100},luminaire:{label:'Luminaires',prix:80},tapis:{label:'Tapis',prix:80},deco_murale:{label:'Décoration murale',prix:80}}},
+  chambre:{label:'Chambre',items:{lit:{label:'Lit + sommier + matelas',prix:500},chevet:{label:'Table(s) de chevet',prix:80},armoire:{label:'Armoire / penderie',prix:250},dressing:{label:'Dressing / rangements',prix:300},rideau:{label:'Rideaux + tringle',prix:80},luminaire:{label:'Luminaire',prix:40},linge:{label:'Linge de lit (couette + oreillers + draps ×2)',prix:80},deco_murale:{label:'Décoration murale',prix:60}}},
+  salon:{label:'Salon / séjour',items:{canape:{label:'Canapé',prix:500},table:{label:'Table basse + meuble TV',prix:200},tv:{label:'Télévision (55")',prix:400},rangement:{label:'Meuble rangement',prix:180},table_manger:{label:'Table à manger',prix:220,qtyitem:true,qtydefault:1},chaises:{label:'Chaises',prix:120,qtyitem:true,qtydefault:4},rideau:{label:'Rideaux + tringle',prix:100},luminaire:{label:'Luminaires',prix:80},tapis:{label:'Tapis',prix:80},deco_murale:{label:'Décoration murale',prix:80}}},
   sdb:{label:'Salle de bains',items:{miroir:{label:'Miroir / armoire de toilette',prix:80},accessoires:{label:'Accessoires (porte-serviettes, patères...)',prix:60},linge:{label:'Linge de bain (serviettes ×4 + tapis)',prix:60},rideau_douche:{label:'Rideau de douche',prix:25},luminaire:{label:'Luminaire',prix:40}}},
-  cuisine:{label:'Cuisine',items:{vaisselle:{label:'Vaisselle (assiettes, verres, couverts)',prix:80},casseroles:{label:'Casseroles + poêles',prix:60},ustensiles:{label:'Ustensiles + couteaux',prix:40},linge_cuisine:{label:'Linge de cuisine',prix:20},custom_pe:{label:'Petit électroménager + divers',prix:0,custom:true}}},
-  lcd:{label:'Équipements LCD / Airbnb',items:{literie:{label:'Literie supplémentaire (oreillers, couettes)',prix:120},serviettes:{label:'Serviettes de toilette extra',prix:60},cafetiere:{label:'Cafetière',prix:60},grille_pain:{label:'Grille-pain',prix:35},bouilloire:{label:'Bouilloire',prix:30},fer_repasser:{label:'Fer + table à repasser',prix:60},seche_cheveux:{label:'Sèche-cheveux',prix:25},produits_accueil:{label:'Kit accueil (savon, shampoing...)',prix:40},guides:{label:'Guides touristiques + livret accueil',prix:30}}},
+  cuisine:{label:'Cuisine',items:{vaisselle:{label:'Vaisselle (assiettes, verres, couverts)',prix:80},casseroles:{label:'Casseroles + poêles',prix:60},ustensiles:{label:'Ustensiles + couteaux',prix:40},linge_cuisine:{label:'Linge de cuisine',prix:20},lave_linge:{label:'Lave-linge (si hors électro)',prix:400},custom_pe:{label:'Petit électroménager + divers',prix:0,custom:true}}},
+  lcd:{label:'Équipements LCD / Airbnb',items:{literie:{label:'Literie supplémentaire (oreillers, couettes)',prix:120},serviettes:{label:'Serviettes de toilette extra',prix:60},tv_chambre:{label:'Télévision chambre (32")',prix:180},cafetiere:{label:'Cafetière',prix:60},grille_pain:{label:'Grille-pain',prix:35},bouilloire:{label:'Bouilloire',prix:30},fer_repasser:{label:'Fer + table à repasser',prix:60},seche_cheveux:{label:'Sèche-cheveux',prix:25},produits_accueil:{label:'Kit accueil (savon, shampoing...)',prix:40},guides:{label:'Guides touristiques + livret accueil',prix:30}}},
   bureau:{label:'Bureau',items:{bureau:{label:'Bureau + chaise',prix:200},rangement:{label:'Étagères / rangement',prix:120},rideau:{label:'Rideaux + tringle',prix:80},luminaire:{label:'Luminaire',prix:40}}},
   entree:{label:'Entrée / couloir',items:{rangement:{label:'Meuble entrée / patère',prix:120},miroir:{label:'Miroir',prix:60},luminaire:{label:'Luminaire',prix:40}}},
+  exterieur:{label:'Extérieur / terrasse',items:{salon_jardin:{label:'Salon de jardin (table + chaises)',prix:350},chaises_longues:{label:'Chaises longues / bains de soleil',prix:180},parasol:{label:'Parasol',prix:80},barbecue:{label:'Barbecue / plancha',prix:150},rangement_ext:{label:'Coffre / rangement extérieur',prix:120}}},
   custom:{label:'Pièce personnalisée',items:{mobilier:{label:'Mobilier',prix:300},textiles:{label:'Textiles + rideaux',prix:100},luminaires:{label:'Luminaires',prix:60},divers:{label:'Divers / accessoires',prix:80}}},
 };
 
@@ -1042,8 +1344,10 @@ function renderDecoZones(){
   const cont=document.getElementById('pieces-deco');cont.innerHTML='';
   let grand=0;
   decoZones.forEach(z=>{
-    const def=PIECE_TYPES[z.type];let total=0;
-    Object.entries(z.items).forEach(([k,v])=>{if(v.included)total+=v.prix||0;});
+    const def=PIECE_TYPES[z.type];let totalUnit=0;
+    Object.entries(z.items).forEach(([k,v])=>{if(v.included)totalUnit+=v.prix||0;});
+    const qty=z.qty||1;
+    const total=totalUnit*qty;
     grand+=total;
     const typeOpts=Object.entries(PIECE_TYPES).map(([k,v])=>`<button class="t${z.type===k?' sel':''}" onclick="setDecoType('${z.id}','${k}')">${v.label}</button>`).join('');
     const itemsHtml=Object.entries(def.items).map(([k,v])=>{
@@ -1051,7 +1355,7 @@ function renderDecoZones(){
       if(item.custom)return`<div class="dr"><span style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="toggleDecoItem('${z.id}','${k}')"><span style="width:12px;height:12px;border-radius:3px;background:${item.included?'var(--accent)':'var(--border)'};display:inline-block;flex-shrink:0;"></span><span style="${item.included?'':'text-decoration:line-through;opacity:.4'}">${v.label}</span></span><input type="number" min="0" step="10" value="${item.prix||''}" placeholder="0 €" style="width:80px;font-size:.72rem;" oninput="setCustomDecoPrice('${z.id}','${k}',this.value)" onclick="event.stopPropagation()"></div>`;
       return`<div class="dr" style="cursor:pointer;" onclick="toggleDecoItem('${z.id}','${k}')"><span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:${item.included?'var(--accent)':'var(--border)'};display:inline-block;flex-shrink:0;"></span><span style="${item.included?'':'text-decoration:line-through;opacity:.4'}">${v.label}</span></span><span class="dv">${fmt(v.prix)}</span></div>`;
     }).join('');
-    cont.innerHTML+=`<div class="pd"><div class="pdh"><input style="background:transparent;border:none;border-bottom:1px dashed var(--border);font-family:var(--sans);font-size:.75rem;font-weight:600;width:130px;color:var(--text);padding:1px 3px;" value="${z.name}" oninput="setDecoName('${z.id}',this.value)"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:.65rem;color:var(--muted);">×</span><input type="number" min="1" max="10" value="${z.qty||1}" style="width:38px;font-size:.75rem;text-align:center;" oninput="setDecoQty('${z.id}',+this.value)" title="Nombre de pièces identiques"><span style="font-family:var(--mono);font-size:.78rem;color:var(--accent);">${fmt(total*(z.qty||1))}</span><button class="rbtn" onclick="removeDecoZone('${z.id}')">✕</button></div></div><div class="cr" style="margin-bottom:8px;"><div class="tg">${typeOpts}</div></div>${itemsHtml}</div>`;
+    cont.innerHTML+=`<div class="pd"><div class="pdh"><input style="background:transparent;border:none;border-bottom:1px dashed var(--border);font-family:var(--sans);font-size:.75rem;font-weight:600;width:130px;color:var(--text);padding:1px 3px;" value="${z.name}" oninput="setDecoName('${z.id}',this.value)"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:.65rem;color:var(--muted);">×</span><input type="number" min="1" max="10" value="${qty}" style="width:38px;font-size:.75rem;text-align:center;" oninput="setDecoQty('${z.id}',+this.value)" title="Nombre de pièces identiques"><span style="font-family:var(--mono);font-size:.78rem;color:var(--accent);">${fmt(total)}</span><button class="rbtn" onclick="removeDecoZone('${z.id}')">✕</button></div></div><div class="cr" style="margin-bottom:8px;"><div class="tg">${typeOpts}</div></div>${itemsHtml}</div>`;
   });
   totals.deco=grand;document.getElementById('subtotal-deco').textContent=fmt(grand);document.getElementById('total-deco').textContent=fmt(grand);updateGrand();
 }
@@ -1081,8 +1385,10 @@ function calcLignesLibres(cat){
 }
 
 // ═══ GRAND TOTAL ═══
+let _batchCalc=false;
 function updateGrand(){
-  const trav=totals.sol+totals.peinture+totals.fen+totals.elec+totals.plomb+totals.clim+totals.cloison+totals.special+totals.sdb+totals.cuisine+totals.libretrav;
+  if(_batchCalc) return; // bloque les appels en cascade pendant calcAll
+  const trav=totals.sol+totals.peinture+totals.fen+totals.elec+totals.plomb+totals.clim+totals.cloison+totals.menuint+totals.special+totals.sdb+totals.cuisine+totals.libretrav;
   const deco=totals.deco+totals.libredeco;
   const total=trav+deco;
   const surf=iv('form-surf')||iv('wiz-surf')||iv('elec-surf')||80;
@@ -1100,7 +1406,7 @@ function updateGrand(){
   updateSurfBadge();
 }
 // ═══ MULTI-ZONES SDB ═══
-const SDB_DEF={surf:'petit',carrelage:'eco',douche:'bac',meuble:'simple',wc_presence:'oui',wc_type:'classique',depose:true};
+const SDB_DEF={surf:'petit',carrelage:'eco',douche:'bac',meuble:'simple',wc_presence:'oui',wc_type:'classique',depose:true,seche_serviettes:true};
 
 function sdbZoneTotal(z){
   const surf={petit:3.5,moyen:6,grand:9}[z.surf]||3.5;
@@ -1113,7 +1419,8 @@ function sdbZoneTotal(z){
   const p4={simple:380,meuble:600,meuble80:850}[z.meuble]||380;
   const p5=z.wc_presence==='non'?0:(z.wc_type==='suspendu'?950:380);
   const p6=800+surf*60;
-  return p1+p2+p3+p4+p5+p6;
+  const p7=z.seche_serviettes?350:0;
+  return p1+p2+p3+p4+p5+p6+p7;
 }
 
 function addZoneSDB(opts){
@@ -1149,6 +1456,7 @@ function renderSDBZones(){
       <div class="cr"><label>Meuble vasque</label><div class="tg">${meubleOpts}</div></div>
       <div class="cr"><label>WC</label><div class="tg">${wcPresOpts}</div></div>
       ${wcTypeOpts}
+      <div class="cr"><label>Sèche-serviettes</label><div class="tg"><button class="t${z.seche_serviettes?' sel':''}" onclick="setSDBField('${z.id}','seche_serviettes',true)">Oui (+350 €)</button><button class="t${!z.seche_serviettes?' sel':''}" onclick="setSDBField('${z.id}','seche_serviettes',false)">Non</button></div></div>
     </div></div>`;
   });
   totals.sdb=grand;
@@ -1200,7 +1508,28 @@ function renderCloisonZones(){
 function calcCloison(){renderCloisonZones();}
 function calcSDB(){renderSDBZones();}
 
-function calcAll(){calcSolTotal();calcPeinture();calcFen();calcElec();calcPlomb();renderCloisonZones();calcClim();calcSpecial();renderSDBZones();calcCuisine();renderDecoZones();}
+// ═══ MENUISERIES INTÉRIEURES ═══
+function calcMenuInt(){
+  const skipPE=ck('skip-porte-entree'),skipPI=ck('skip-portes-int'),skipDG=ck('skip-digicode'),skipES=ck('skip-escalier');
+  const pPE=skipPE?0:iv('porte-entree-nb')*(S['porte-entree-type']==='blindee'?1800:900);
+  const pxPI={eco:220,standard:320}[S['porte-int-gamme']]||220;
+  const pPI=skipPI?0:iv('portes-int-nb')*pxPI;
+  const pxDG={connectee:350,digicode:180}[S['digicode-type']]||350;
+  const pDG=skipDG?0:iv('digicode-nb')*pxDG;
+  const pxES={peinture:600,marches:1800,complet:4500}[S['escalier-type']]||600;
+  const pES=skipES?0:pxES;
+  setSkip('step-porte-entree',skipPE);setSkip('step-portes-int',skipPI);setSkip('step-digicode',skipDG);setSkip('step-escalier',skipES);
+  setP('price-porte-entree',pPE);setP('price-portes-int',pPI);setP('price-digicode',pDG);setP('price-escalier',pES);
+  const t=pPE+pPI+pDG+pES;totals.menuint=t;
+  document.getElementById('subtotal-menuint').textContent=fmt(t);document.getElementById('total-menuint').textContent=fmt(t);updateGrand();
+}
+
+function calcAll(){
+  _batchCalc=true;
+  calcSolTotal();calcPeinture();calcFen();calcElec();calcPlomb();renderCloisonZones();calcMenuInt();calcClim();calcSpecial();renderSDBZones();calcCuisine();renderDecoZones();
+  _batchCalc=false;
+  updateGrand();
+}
 
 // ═══ EXPORT EXCEL ═══
 function updateExcel(trav,deco,total,surf){
@@ -1243,8 +1572,8 @@ function saveSims(s){localStorage.setItem('simulations',JSON.stringify(s));}
 
 function collectState(){
   const inputs={};
-  ['wiz-surf','form-surf','sim-hypothesis','peinture-surf','peinture-pieces','fen-petit','fen-standard','fen-baie','elec-surf','elec-pieces','vmc-nb','interphone-nb','chauffe-eau-nb','clim-nb','sdb-nb','cuisine-nb','cuisine-lin','plomb-surf','humidite-surf','combles-surf','bals-nb','cloison-ml','cloison-hsp'].forEach(id=>{inputs[id]=document.getElementById(id)?.value;});
-  ['skip-enduit','skip-fen-reb','skip-volet-depose','skip-vmc','skip-credence','skip-humidite','skip-combles','skip-exterieur','skip-interphone','skip-chauffe-eau','skip-cuisine'].forEach(id=>{inputs[id]=document.getElementById(id)?.checked;});
+  ['wiz-surf','form-surf','sim-hypothesis','peinture-surf','peinture-pieces','fen-petit','fen-standard','fen-baie','elec-surf','elec-pieces','vmc-nb','interphone-nb','chauffe-eau-nb','clim-nb','sdb-nb','cuisine-nb','cuisine-lin','plomb-surf','humidite-surf','combles-surf','seche-serviettes-nb','radiateurs-nb','bals-nb','cloison-ml','cloison-hsp','porte-entree-nb','portes-int-nb','digicode-nb','facade-surf','terrasse-surf'].forEach(id=>{inputs[id]=document.getElementById(id)?.value;});
+  ['skip-enduit','skip-fen-reb','skip-volet-depose','skip-vmc','skip-credence','skip-humidite','skip-combles','skip-seche-serviettes','skip-radiateurs','skip-exterieur','skip-facade','skip-terrasse','skip-porte-entree','skip-portes-int','skip-digicode','skip-escalier','skip-interphone','skip-chauffe-eau','skip-cuisine'].forEach(id=>{inputs[id]=document.getElementById(id)?.checked;});
   inputs['sim-notes']=document.getElementById('sim-notes')?.value;
   inputs['sim-hypothesis']=document.getElementById('sim-hypothesis')?.value;
   return{S:{...S},solZones:JSON.parse(JSON.stringify(solZones)),sdbZones:JSON.parse(JSON.stringify(sdbZones)),cloisonZones:JSON.parse(JSON.stringify(cloisonZones)),decoZones:JSON.parse(JSON.stringify(decoZones)),lignesLibres:JSON.parse(JSON.stringify(lignesLibres)),inputs,totals:{...totals}};
@@ -1268,7 +1597,7 @@ function saveSimulation(){
   const total=Object.values(totals).reduce((a,b)=>a+b,0);
   const date=new Date().toLocaleDateString('fr-FR');
   const surf=iv('wiz-surf')||iv('elec-surf')||0;
-  const trav=totals.sol+totals.peinture+totals.fen+totals.elec+totals.plomb+totals.clim+totals.cloison+totals.special+totals.sdb+totals.cuisine+totals.libretrav;
+  const trav=totals.sol+totals.peinture+totals.fen+totals.menuint+totals.elec+totals.plomb+totals.clim+totals.cloison+totals.special+totals.sdb+totals.cuisine+totals.libretrav;
   const deco=totals.deco+totals.libredeco;
   const exploitation=wizState?.exploitation||'lld';
   const hypothesis=document.getElementById('sim-hypothesis')?.value||'';
