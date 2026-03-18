@@ -950,36 +950,42 @@ function calcCuisine(){
   const skip=ck('skip-cuisine');
   const body=document.getElementById('cuisine-body');
   if(body) body.style.opacity=skip?'0.35':'1';
+
   const electro=({vitroceramique:180,induction:350,non:0}[S['electro-plaque']]||0)
     +(S['electro-four']==='oui'?250:0)+(S['electro-hotte']==='oui'?220:0)
     +(S['electro-frigo']==='oui'?350:0)+(S['electro-lv']==='oui'?450:0)
     +(S['electro-mo']==='oui'?100:0)+(S['electro-ll']==='oui'?400:0);
+
   if(skip){
     setP('price-c-1',0);setP('price-c-2',0);setP('price-c-3',0);setP('price-c-4',0);setP('price-c-5',electro);
     totals.cuisine=electro;
-    document.getElementById('subtotal-cuisine').textContent=fmt(electro);document.getElementById('total-cuisine').textContent=fmt(electro);updateGrand();return;
+    document.getElementById('subtotal-cuisine').textContent=fmt(electro);
+    document.getElementById('total-cuisine').textContent=fmt(electro);
+    updateGrand();return;
   }
+
   const nb=iv('cuisine-nb'),lin=iv('cuisine-lin'),skipCr=ck('skip-credence');
   if(nb===0||lin===0){
     setP('price-c-1',0);setP('price-c-2',0);setP('price-c-3',0);setP('price-c-4',0);setP('price-c-5',electro);
     totals.cuisine=electro;
-    document.getElementById('subtotal-cuisine').textContent=fmt(electro);document.getElementById('total-cuisine').textContent=fmt(electro);updateGrand();return;
+    document.getElementById('subtotal-cuisine').textContent=fmt(electro);
+    document.getElementById('total-cuisine').textContent=fmt(electro);
+    updateGrand();return;
   }
+
   const gp={eco:300,standard:450,premium:750}[S['cuisine-gamme']]||300;
   const pdt=S.pdtrav==='quartz'?lin*200:lin*80;
   const p1=nb*(250+lin*80);
   const p2=nb*(lin*gp*1.6+400+pdt);
   const p3=skipCr?0:nb*lin*(S['credence-type']==='verre'?200:120);
   const p4=nb*350;
+  const p5=electro;
   setSkip('step-c-credence',skipCr);
-  const electro=({vitroceramique:180,induction:350,non:0}[S['electro-plaque']]||0)
-    +(S['electro-four']==='oui'?250:0)+(S['electro-hotte']==='oui'?220:0)
-    +(S['electro-frigo']==='oui'?350:0)+(S['electro-lv']==='oui'?450:0)
-    +(S['electro-mo']==='oui'?100:0)+(S['electro-ll']==='oui'?400:0);
-  // p5 already set above
   setP('price-c-1',p1);setP('price-c-2',p2);setP('price-c-3',p3);setP('price-c-4',p4);setP('price-c-5',p5);
   const t=p1+p2+p3+p4+p5;totals.cuisine=t;
-  document.getElementById('subtotal-cuisine').textContent=fmt(t);document.getElementById('total-cuisine').textContent=fmt(t);updateGrand();
+  document.getElementById('subtotal-cuisine').textContent=fmt(t);
+  document.getElementById('total-cuisine').textContent=fmt(t);
+  updateGrand();
 }
 
 // ═══ AMEUBLEMENT / DÉCO ═══
